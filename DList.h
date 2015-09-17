@@ -2,6 +2,7 @@
 #define __DLIST_H__
 
 #include <assert.h>
+#include "DynArray.h"
 
 template <class TYPE>
 void swap(TYPE &a, TYPE &b) {
@@ -218,6 +219,12 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+	void insertDynArray(const DynArray &dyn)
+	{
+		for (int i = 0; i < dyn.getNumElements(); i++)
+			add(dyn[i]);
 	}
 
 	unsigned int sort_copy()

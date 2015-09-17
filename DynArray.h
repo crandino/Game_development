@@ -20,9 +20,6 @@ private:
 		allocated_memory = new_mem_size;
 		TYPE *tmp = new TYPE[allocated_memory];
 
-	/*	if (num_elements > allocated_memory)
-			num_elements = allocated_memory;*/
-
 		if (data != NULL)
 		{
 			for (unsigned int i = 0; i < num_elements; i++)
@@ -146,8 +143,8 @@ public:
 		return false;
 	}
 
-	void insertList(const DList<TYPE> &list) {
-		
+	void insertList(const DList &list)
+	{
 		if (list.count() > allocated_memory - num_elements)
 			reallocate(num_elements + list.count());
 		

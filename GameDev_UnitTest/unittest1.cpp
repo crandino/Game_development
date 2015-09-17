@@ -246,6 +246,28 @@ namespace GameDev_UnitTest
 			Assert::AreEqual(dl1.getNodeAtPos(5)->data, 777.7f);
 			Assert::AreEqual(dl1.getNodeAtPos(6)->data, 0.0f);
 		}
+		TEST_METHOD(DListInsertDynArray)
+		{
+			DynArray<int> dyn1;
+			for (int i = 0; i < 20; i++)
+			{
+				dyn1.pushBack(i);
+			}
+
+			DList<int> lst1;
+			for (int i = 990; i < 999; i++)
+			{
+				lst1.add(i);
+			}
+
+			lst1.insertDynArray(dyn1);
+
+			for (int i = 0, j = 990; i < 10; i++, j++)
+				Assert::AreEqual(lst1[i], j);
+
+			for (int i = 10, j = 0; i < 29; i++, j++)
+				Assert::AreEqual(lst1[i], j);
+		}
 		TEST_METHOD(DListGetFirst)
 		{
 			DList<float> dl1;
