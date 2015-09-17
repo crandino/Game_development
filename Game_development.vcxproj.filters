@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Point3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Point3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
