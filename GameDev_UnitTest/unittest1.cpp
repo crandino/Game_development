@@ -480,6 +480,29 @@ namespace GameDev_UnitTest
 			Assert::IsTrue(dyn1[0] == 8);
 		}
 
+		TEST_METHOD(DynArrayInsertList)
+		{
+			DynArray<int> dyn1;
+			for (int i = 0; i < 20; i++)
+			{
+				dyn1.pushBack(i);
+			}
+
+			DList<int> lst1;
+			for (int i = 990; i < 999; i++)
+			{
+				lst1.add(i);
+			}
+
+			dyn1.insertList(lst1);
+
+			for (int i = 0; i < 20; i++)
+				Assert::AreEqual(dyn1[i],i);
+
+			for (int i = 20, j = 990; i < 29; i++, j++)
+				Assert::AreEqual(dyn1[i], j);
+		}
+
 		TEST_METHOD(DynArrayFlip)
 		{
 			DynArray<unsigned int> dyn1;

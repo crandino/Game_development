@@ -1,7 +1,7 @@
 #ifndef __DYNARRAY_H__
 #define __DYNARRAY_H__
 
-#include <assert.h> 
+#include <assert.h>
 #include "DList.h"
 
 #define DYN_ARRAY_BLOCK_SIZE 16
@@ -144,6 +144,19 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+	void insertList(const DList<TYPE> &list) {
+		
+		if (list.count() > allocated_memory - num_elements)
+			reallocate(num_elements + list.count());
+		
+		doubleNode<TYPE> *item = list.getFirst();
+		while (item != NULL)
+		{
+			data[num_elements++] = item->data;
+			item = item->next;
+		}
 	}
 
 	void flip()
