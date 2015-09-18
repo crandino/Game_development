@@ -77,11 +77,15 @@ int main(int argc, char** argv)
 		case(CLEAN) :
 
 			LOG("Clean Step...");
-			if (app->clean() != true)
+			if (app->cleanUp() != true)
 				state = FAIL;
 			else
 			{
-				// RELEASE(app);
+				if (app != NULL)
+				{
+					delete app;
+					app = NULL;
+				}
 				state = EXIT;
 				exit = EXIT_SUCCESS;
 			}
