@@ -246,7 +246,7 @@ namespace GameDev_UnitTest
 			Assert::AreEqual(dl1.getNodeAtPos(5)->data, 777.7f);
 			Assert::AreEqual(dl1.getNodeAtPos(6)->data, 0.0f);
 		}
-		TEST_METHOD(DListInsertDynArray)
+		/*TEST_METHOD(DListInsertDynArray)
 		{
 			DynArray<int> dyn1;
 			for (int i = 0; i < 20; i++)
@@ -267,7 +267,7 @@ namespace GameDev_UnitTest
 
 			for (int i = 10, j = 0; i < 29; i++, j++)
 				Assert::AreEqual(lst1[i], j);
-		}
+		}*/
 		TEST_METHOD(DListGetFirst)
 		{
 			DList<float> dl1;
@@ -502,28 +502,28 @@ namespace GameDev_UnitTest
 			Assert::IsTrue(dyn1[0] == 8);
 		}
 
-		TEST_METHOD(DynArrayInsertList)
-		{
-			DynArray<int> dyn1;
-			for (int i = 0; i < 20; i++)
-			{
-				dyn1.pushBack(i);
-			}
+		//TEST_METHOD(DynArrayInsertList)
+		//{
+		//	DynArray<int> dyn1;
+		//	for (int i = 0; i < 20; i++)
+		//	{
+		//		dyn1.pushBack(i);
+		//	}
 
-			DList<int> lst1;
-			for (int i = 990; i < 999; i++)
-			{
-				lst1.add(i);
-			}
+		//	DList<int> lst1;
+		//	for (int i = 990; i < 999; i++)
+		//	{
+		//		lst1.add(i);
+		//	}
 
-			dyn1.insertList(lst1);
+		//	dyn1.insertList(lst1);
 
-			for (int i = 0; i < 20; i++)
-				Assert::AreEqual(dyn1[i],i);
+		//	for (int i = 0; i < 20; i++)
+		//		Assert::AreEqual(dyn1[i],i);
 
-			for (int i = 20, j = 990; i < 29; i++, j++)
-				Assert::AreEqual(dyn1[i], j);
-		}
+		//	for (int i = 20, j = 990; i < 29; i++, j++)
+		//		Assert::AreEqual(dyn1[i], j);
+		//}
 
 		TEST_METHOD(DynArrayFlip)
 		{

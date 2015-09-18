@@ -64,8 +64,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="DList.h" />
     <ClInclude Include="DynArray.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Module.h" />
     <ClInclude Include="Point3d.h" />
   </ItemGroup>
   <ItemGroup>
