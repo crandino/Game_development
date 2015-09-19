@@ -4,6 +4,48 @@
 #include "Globals.h"
 #include "Application.h"
 
+// Due to a problem with SDL:
+//"  Error1 error LNK2005: _main already defined in
+//   SDL2main.lib(SDL_windows_main.obj)  "
+// I also include...
+//#include "SDL\include\SDL.h"
+
+// pragma is an exclusive extension of Visual Studio,
+// so it only works on here. 
+//#pragma comment( lib, "SDL/lib/x86/SDL2.lib")
+//#pragma comment( lib, "SDL/lib/x86/SDL2main.lib")
+
+// --------------- Dr Memory ---------------	
+// Arguments -visual_studio -- "$(TargetPath)"
+// Directory $(SolutionDir)/
+
+// ------------- SDL Config --------------------------
+
+/* Setting up SDL configuration. On Project Properties
+Configuration Propertires/VC++ Directories:
+->Include directories: $(ProjectDir)SDL\include
+->Library directories: $(ProjectDir)SDL\lib\x86
+Linker/Input/Additional Dependencies, include
+$(ProjectDir)SDL\lib\x86\SDL2.lib
+$(ProjectDir)SDL\lib\x86\SDL2main.lib
+Linker/Input/System/Subsystem/ choose
+Windows (/SUBSYSTEM:WINDOWS)
+*/
+
+// ------------- Include rules ------------------------
+
+/*If, for example, class A uses class B, then class B is one of class A's
+dependencies. Whether it can be forward declared or needs to be included
+depends on how B is used within A:
+
+-do nothing if : A makes no references at all to B
+-do nothing if : The only reference to B is in a friend declaration
+-forward declare B if : A contains a B pointer or reference : B* myb;
+-forward declare B if: one or more functions has a B object / pointer / reference
+as a parementer, or as a return type : B MyFunction(B myb);
+-#include "b.h" if: B is a parent class of A
+-#include "b.h" if : A contains a B object : B myb;*/
+
 enum MainStates
 {
 	CREATE = 1,
@@ -64,7 +106,7 @@ int main(int argc, char** argv)
 			}
 			else
 			{
-				LOG("Update Step...");
+				LOG("======> Update Step...");
 				state = LOOP;
 			}
 			break;
@@ -76,7 +118,7 @@ int main(int argc, char** argv)
 
 		case(CLEAN) :
 
-			LOG("Clean Step...");
+			LOG("======> Clean Step...");
 			if (app->cleanUp() != true)
 				state = FAIL;
 			else

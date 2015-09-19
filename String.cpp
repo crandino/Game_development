@@ -235,6 +235,36 @@ void String::trim()
 	*(p++) = '\0';
 }
 
+const String& String::create(const char *format, ...)
+{
+	allocated_memory = 0;
+
+	if (format != NULL)
+	{
+		static char tmp[TMP_STRING_SIZE];
+		static va_list ap;
+
+		// Construct the string from variable arguments
+		va_start(ap, format);
+		int res = vsprintf_s(tmp, TMP_STRING_SIZE, format, ap);
+		va_end(ap);
+
+		if (res > 0)
+		{
+			alloc(res + 1);
+			strcpy_s(string, allocated_memory, tmp);
+		}
+	}
+
+	if (allocated_memory == 0)
+	{
+		alloc(1);
+		clear();
+	}
+
+	return *this;
+}
+
 unsigned int String::find(const char *str_to_find, DList<char*> *start_pos)
 {
 	unsigned int matches = 0;

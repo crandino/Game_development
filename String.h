@@ -33,6 +33,9 @@ public:
 	unsigned int find(const char *str_to_find, DList<char*> *start_pos = NULL);
 	const String& replace(const String &str_to_substitute, const String &new_string);
 
+	// Ricard method
+	const String& create(const char *format, ...);
+
 	unsigned int getLength() const;
 	const char* getString() const;
 	unsigned int capacity() const;
