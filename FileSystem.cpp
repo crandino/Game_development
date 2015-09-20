@@ -30,3 +30,15 @@ bool FileSystem::cleanUp()
 
 	return true;
 }
+
+SDL_RWops *loadFile(const char *file_name)
+{
+	void *ret = NULL;
+
+	PHYSFS_File *pfile = PHYSFS_openRead(file_name);
+	PHYSFS_uint64 size = PHYSFS_fileLength(pfile);
+	PHYSFS_read(pfile, ret, PHYSFS_fileLength(pfile), 0);
+	PHYSFS_close(pfile);
+
+	return SDL_RWFromConstMem(ret, size);
+}
