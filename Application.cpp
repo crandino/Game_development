@@ -6,7 +6,7 @@
 #include "Textures.h"
 #include "Audio.h"
 #include "Scene.h"
-//#include "FileSystem.h"
+#include "FileSystem.h"
 
 #include "Application.h"
 
@@ -21,11 +21,11 @@ Application::Application(int argc, char* args[]) : argc(argc), args(args)
 	tex = new Textures();
 	audio = new Audio();
 	scene = new Scene();
-	//fsystem = new FileSystem();
+	fsystem = new FileSystem();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
-	//addModule(fsystem);
+	addModule(fsystem);
 	addModule(input);
 	addModule(win);
 	addModule(tex);

@@ -32,6 +32,19 @@ Linker/Input/System/Subsystem/ choose
 Windows (/SUBSYSTEM:WINDOWS)
 */
 
+// ------------- PhysFS Config --------------------------
+
+/* Setting up PhysFS configuration. On Project Properties
+Configuration Propertires/VC++ Directories:
+->Include directories: $(ProjectDir)PhysFS\include
+->Library directories: $(ProjectDir)PhysFS\libx86
+Linker/Input/Additional Dependencies, include
+$(ProjectDir)PhysFS\libx86\physfs.lib
+$(ProjectDir)PhysFS\libx86\physfs.exp
+Linker/Input/System/Subsystem/ choose
+Windows (/SUBSYSTEM:WINDOWS)
+*/
+
 // ------------- Include rules ------------------------
 
 /*If, for example, class A uses class B, then class B is one of class A's
