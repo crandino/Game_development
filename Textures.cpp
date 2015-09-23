@@ -1,6 +1,8 @@
-#include "Globals.h"
-#include "Application.h"
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "App.h"
 #include "Render.h"
+#include "FileSystem.h"
 #include "Textures.h"
 
 #include "SDL_image/include/SDL_image.h"
@@ -45,9 +47,9 @@ bool Textures::start()
 bool Textures::cleanUp()
 {
 	LOG("Freeing textures and Image library");
-	doubleNode<SDL_Texture*>* item = textures.getFirst();
+	doubleNode<SDL_Texture*>* item;
 
-	for(; item != NULL; item = item->next)
+	for(item = textures.getFirst(); item != NULL; item = item->next)
 	{
 		SDL_DestroyTexture(item->data);
 	}
@@ -58,10 +60,10 @@ bool Textures::cleanUp()
 }
 
 // Load new texture from file path
-SDL_Texture* const Textures::load(const char* path)
+SDL_Texture* const Textures::Load(const char* path)
 {
 	SDL_Texture* texture = NULL;
-	SDL_Surface* surface = IMG_Load(path);
+	SDL_Surface* surface = IMG_Load_RW(app->fs->Load(path), 1);
 
 	if(surface == NULL)
 	{
@@ -69,7 +71,7 @@ SDL_Texture* const Textures::load(const char* path)
 	}
 	else
 	{
-		texture = loadSurface(surface);
+		texture = LoadSurface(surface);
 		SDL_FreeSurface(surface);
 	}
 
@@ -77,11 +79,11 @@ SDL_Texture* const Textures::load(const char* path)
 }
 
 // Unload texture
-bool Textures::unLoad(SDL_Texture* texture)
+bool Textures::UnLoad(SDL_Texture* texture)
 {
-	doubleNode<SDL_Texture*>* item = textures.getFirst();
+	doubleNode<SDL_Texture*>* item;
 
-	for(; item != NULL; item = item->next)
+	for(item = textures.getFirst(); item != NULL; item = item->next)
 	{
 		if(texture == item->data)
 		{
@@ -95,7 +97,7 @@ bool Textures::unLoad(SDL_Texture* texture)
 }
 
 // Translate a surface into a texture
-SDL_Texture* const Textures::loadSurface(SDL_Surface* surface)
+SDL_Texture* const Textures::LoadSurface(SDL_Surface* surface)
 {
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(app->render->renderer, surface);
 
@@ -112,7 +114,7 @@ SDL_Texture* const Textures::loadSurface(SDL_Surface* surface)
 }
 
 // Retrieve size of a texture
-void Textures::getSize(const SDL_Texture* texture, unsigned int& width, unsigned int& height) const
+void Textures::GetSize(const SDL_Texture* texture, uint& width, uint& height) const
 {
 	SDL_QueryTexture((SDL_Texture*)texture, NULL, NULL, (int*) &width, (int*) &height);
 }

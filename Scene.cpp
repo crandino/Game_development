@@ -1,5 +1,6 @@
-#include "Globals.h"
-#include "Application.h"
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "App.h"
 #include "Input.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -25,17 +26,11 @@ bool Scene::awake()
 	return ret;
 }
 
-/*Called before the first frame
-  Carregar fitxers d'aquesta manera és molt dolent. 
-  Aquests d'aquí utilitzen path relatius, que és correcte. 
-  
-  El que es fa aquí es utilitzar Sandbox, és a dir, zones delimitades
-  on es permet l'escriptura, per evitar accedir a zones protegides.
-  */
+// Called before the first frame
 bool Scene::start()
 {
-	img = app->tex->load("game_test/textures/test.png");
-	app->audio->playMusic("game_test/audio/music/music_sadpiano.ogg");
+	img = app->tex->Load("textures/test.png");
+	app->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	return true;
 }
 
@@ -49,7 +44,7 @@ bool Scene::preUpdate()
 // Called each loop iteration
 bool Scene::update(float dt)
 {
-	app->render->blit(img, 0, 0);
+	app->render->Blit(img, 0, 0);
 	return true;
 }
 
@@ -58,7 +53,7 @@ bool Scene::postUpdate()
 {
 	bool ret = true;
 
-	if(app->input->getKeyDown(SDLK_ESCAPE) == true)
+	if(app->input->GetKeyDown(SDLK_ESCAPE) == true)
 		ret = false;
 
 	return ret;

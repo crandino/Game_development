@@ -1,9 +1,8 @@
-#include "Globals.h"
-#include "Application.h"
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "App.h"
 #include "Window.h"
 #include "Render.h"
-
-#include <math.h>
 
 #define VSYNC true
 
@@ -87,26 +86,26 @@ bool Render::cleanUp()
 	return true;
 }
 
-void Render::setBackgroundColor(SDL_Color color)
+void Render::SetBackgroundColor(SDL_Color color)
 {
 	background = color;
 }
 
-void Render::setViewPort(const SDL_Rect& rect)
+void Render::SetViewPort(const SDL_Rect& rect)
 {
 	SDL_RenderSetViewport(renderer, &rect);
 }
 
-void Render::resetViewPort()
+void Render::ResetViewPort()
 {
 	SDL_RenderSetViewport(renderer, &viewport);
 }
 
 // Blit to screen
-bool Render::blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivot_x, int pivot_y) const
+bool Render::Blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivot_x, int pivot_y) const
 {
 	bool ret = true;
-	unsigned int scale = app->win->getScale();
+	uint scale = app->win->getScale();
 
 	SDL_Rect rect;
 	rect.x = (int)(camera.x * speed) + x * scale;
@@ -144,10 +143,10 @@ bool Render::blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, f
 	return ret;
 }
 
-bool Render::drawQuad(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool filled, bool use_camera) const
+bool Render::DrawQuad(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool filled, bool use_camera) const
 {
 	bool ret = true;
-	unsigned int scale = app->win->getScale();
+	uint scale = app->win->getScale();
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
@@ -172,10 +171,10 @@ bool Render::drawQuad(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, 
 	return ret;
 }
 
-bool Render::drawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
+bool Render::DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
 {
 	bool ret = true;
-	unsigned int scale = app->win->getScale();
+	uint scale = app->win->getScale();
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
@@ -196,10 +195,10 @@ bool Render::drawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b,
 	return ret;
 }
 
-bool Render::drawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
+bool Render::DrawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
 {
 	bool ret = true;
-	unsigned int scale = app->win->getScale();
+	uint scale = app->win->getScale();
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
@@ -209,7 +208,7 @@ bool Render::drawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uin
 
 	float factor = (float)M_PI / 180.0f;
 
-	for(unsigned int i = 0; i < 360; ++i)
+	for(uint i = 0; i < 360; ++i)
 	{
 		points[i].x = (int)(x + radius * cos(i * factor));
 		points[i].y = (int)(y + radius * sin(i * factor));

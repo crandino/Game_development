@@ -73,34 +73,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DList.h" />
-    <ClInclude Include="DynArray.h" />
-    <ClInclude Include="FileSystem.h" />
-    <ClInclude Include="Globals.h" />
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Audio.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Module.h" />
-    <ClInclude Include="Point2d.h" />
-    <ClInclude Include="Render.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Textures.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="Point3d.h" />
-    <ClInclude Include="String.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="PugiXml\src\pugixml.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="String.cpp" />
+    <ClCompile Include="p2Log.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DList.h" />
+    <ClInclude Include="DynArray.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Module.h" />
+    <ClInclude Include="PugiXml\src\pugiconfig.hpp" />
+    <ClInclude Include="PugiXml\src\pugixml.hpp" />
+    <ClInclude Include="Render.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Textures.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="p2Defs.h" />
+    <ClInclude Include="p2Log.h" />
+    <ClInclude Include="p2SString.h" />
+    <ClInclude Include="Point2d.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

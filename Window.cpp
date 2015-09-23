@@ -1,5 +1,6 @@
-#include "Globals.h"
-#include "Application.h"
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "App.h"
 #include "Window.h"
 
 #include "SDL/include/SDL.h"
@@ -14,8 +15,7 @@ Window::Window() : Module()
 
 // Destructor
 Window::~Window()
-{
-}
+{ }
 
 // Called before render is available
 bool Window::awake()
@@ -31,7 +31,6 @@ bool Window::awake()
 	else
 	{
 		//Create window
-		title.create(WINDOW_TITLE);
 		Uint32 flags = SDL_WINDOW_SHOWN;
 		width = SCREEN_WIDTH;
 		height = SCREEN_HEIGHT;
@@ -68,6 +67,7 @@ bool Window::awake()
 		{
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
+			setTitle(app->config.child("name").child_value());
 		}
 	}
 
@@ -97,13 +97,13 @@ void Window::setTitle(const char* new_title)
 	SDL_SetWindowTitle(window, new_title);
 }
 
-void Window::getWindowSize(unsigned int& width, unsigned int& height) const
+void Window::getWindowSize(uint& width, uint& height) const
 {
 	width = this->width;
 	height = this->height;
 }
 
-unsigned int Window::getScale() const
+uint Window::getScale() const
 {
 	return scale;
 }

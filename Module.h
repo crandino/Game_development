@@ -1,14 +1,14 @@
 // ----------------------------------------------------
-// j1Module.h
+// Module.h
 // Interface for all engine modules
 // ----------------------------------------------------
 
 #ifndef __MODULE_H__
 #define __MODULE_H__
 
-#include "String.h"
+#include "p2SString.h"
 
-class Application;
+class App;
 
 class Module
 {
@@ -17,7 +17,7 @@ public:
 	Module() : active(false)
 	{}
 
-	void init()
+	void Init()
 	{
 		active = true;
 	}
@@ -60,7 +60,7 @@ public:
 
 public:
 
-	String		name;
+	p2SString	name;
 	bool		active;
 
 };

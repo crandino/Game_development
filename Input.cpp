@@ -1,5 +1,6 @@
-#include "Globals.h"
-#include "Application.h"
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "App.h"
 #include "Input.h"
 #include "Window.h"
 #include "SDL/include/SDL.h"
@@ -38,7 +39,7 @@ bool Input::awake()
 bool Input::start()
 {
 	SDL_StopTextInput();
-	cleanKeys();
+	CleanKeys();
 	return true;
 }
 
@@ -46,7 +47,7 @@ bool Input::start()
 bool Input::preUpdate()
 {
 	static SDL_Event event;
-	cleanKeys();
+	CleanKeys();
 
 	while(SDL_PollEvent(&event) != 0)
 	{
@@ -138,7 +139,7 @@ bool Input::cleanUp()
 }
 
 // ---------
-void Input::cleanKeys()
+void Input::CleanKeys()
 {
 	// memset would be faster!
 	for(int i = 0; i < WE_COUNT; ++i)
@@ -159,48 +160,48 @@ void Input::cleanKeys()
 	mouse_motion_x = mouse_motion_y = 0;
 }
 
-bool Input::getWindowEvent(EventWindow ev)
+bool Input::GetWindowEvent(EventWindow ev)
 {
 	return windowEvents[ev];
 }
 
-bool Input::getKeyDown(int code)
+bool Input::GetKeyDown(int code)
 {
 	return keyState[code] == KS_DOWN;
 }
 
-bool Input::getKeyRepeat(int code)
+bool Input::GetKeyRepeat(int code)
 {
 	return keyState[code] == KS_REPEAT;
 }
 
-bool Input::getKeyUp(int code)
+bool Input::GetKeyUp(int code)
 {
 	return keyState[code] == KS_UP;
 }
 
-bool Input::getMouseButtonDown(int code)
+bool Input::GetMouseButtonDown(int code)
 {
 	return mouse_buttons[code - 1] == KS_DOWN;
 }
 
-bool Input::getMouseButtonRepeat(int code)
+bool Input::GetMouseButtonRepeat(int code)
 {
 	return mouse_buttons[code - 1] == KS_REPEAT;
 }
 
-bool Input::getMouseButtonUp(int code)
+bool Input::GetMouseButtonUp(int code)
 {
 	return mouse_buttons[code - 1] == KS_UP;
 }
 
-void Input::getMousePosition(int& x, int& y)
+void Input::GetMousePosition(int& x, int& y)
 {
 	x = mouse_x;
 	y = mouse_y;
 }
 
-void Input::getMouseMotion(int& x, int& y)
+void Input::GetMouseMotion(int& x, int& y)
 {
 	x = mouse_motion_x;
 	y = mouse_motion_y;

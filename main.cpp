@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Globals.h"
-#include "Application.h"
+#include "p2Log.h"
+#include "App.h"
 
 // Due to a problem with SDL:
 //"  Error1 error LNK2005: _main already defined in
@@ -70,7 +70,7 @@ enum MainStates
 	EXIT
 };
 
-Application *app = NULL;
+App *app = NULL;
 
 int main(int argc, char** argv)
 {
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 		case(CREATE) :
 
 			LOG("======> Creation Step...");
-			app = new Application(argc, argv);
+			app = new App(argc, argv);
 			if (app == NULL)
 			{
 				LOG("Creation Error!");
@@ -99,10 +99,10 @@ int main(int argc, char** argv)
 
 		case(AWAKE) :
 
-			LOG("======> Awake Step...");
+			LOG("======> awake Step...");
 			if (app->awake() != true)
 			{
-				LOG("Awake Error!");
+				LOG("awake Error!");
 				state = FAIL;
 			}
 			else
@@ -111,15 +111,15 @@ int main(int argc, char** argv)
 
 		case(START) :
 
-			LOG("======> Start Step...");
+			LOG("======> start Step...");
 			if (app->start() != true)
 			{
-				LOG(" Start Error!");
+				LOG(" start Error!");
 				state = FAIL;
 			}
 			else
 			{
-				LOG("======> Update Step...");
+				LOG("======> update Step...");
 				state = LOOP;
 			}
 			break;
@@ -157,6 +157,5 @@ int main(int argc, char** argv)
 	}
 
 	LOG("Exiting program.");
-
 	return exit;
 }

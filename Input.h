@@ -48,26 +48,26 @@ public:
 	bool cleanUp();
 
 	// Gather relevant win events
-	bool getWindowEvent(EventWindow ev);
+	bool GetWindowEvent(EventWindow ev);
 
 	// Check key states (includes mouse and joy buttons)
-	bool getKeyDown(int code);
-	bool getKeyRepeat(int code);
-	bool getKeyUp(int code);
+	bool GetKeyDown(int code);
+	bool GetKeyRepeat(int code);
+	bool GetKeyUp(int code);
 
 	// Check if a certain window event happened
-	bool getWindowEvent(int code);
+	bool GetWindowEvent(int code);
 
 	// Get mouse / axis position
-	void getMousePosition(int &x, int &y);
-	void getMouseMotion(int& x, int& y);
+	void GetMousePosition(int &x, int &y);
+	void GetMouseMotion(int& x, int& y);
 
-	bool getMouseButtonDown(int code);
-	bool getMouseButtonRepeat(int code);
-	bool getMouseButtonUp(int code);
+	bool GetMouseButtonDown(int code);
+	bool GetMouseButtonRepeat(int code);
+	bool GetMouseButtonUp(int code);
 
 private:
-	void cleanKeys();
+	void CleanKeys();
 
 private:
 	bool		windowEvents[WE_COUNT];

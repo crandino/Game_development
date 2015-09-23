@@ -1,5 +1,7 @@
-#include "Globals.h"
-#include "Application.h"
+#include "p2Defs.h"
+#include "p2Log.h"
+#include "App.h"
+#include "FileSystem.h"
 #include "Audio.h"
 
 #include "SDL/include/SDL.h"
@@ -26,7 +28,8 @@ bool Audio::awake()
 	if(SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
 	{
 		LOG("SDL_INIT_AUDIO could not initialize! SDL_Error: %s\n", SDL_GetError());
-		ret = false;
+		active = false;
+		ret = true;
 	}
 
 	// load support for the JPG and PNG image formats
@@ -36,14 +39,16 @@ bool Audio::awake()
 	if((init & flags) != flags)
 	{
 		LOG("Could not initialize Mixer lib. Mix_Init: %s", Mix_GetError());
-		ret = false;
+		active = false;
+		ret = true;
 	}
 
 	//Initialize SDL_mixer
 	if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
 		LOG("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-		ret = false;
+		active = false;
+		ret = true;
 	}
 
 	return ret;
@@ -52,6 +57,9 @@ bool Audio::awake()
 // Called before quitting
 bool Audio::cleanUp()
 {
+	if(!active)
+		return true;
+
 	LOG("Freeing sound FX, closing Mixer and Audio subsystem");
 
 	if(music != NULL)
@@ -59,8 +67,8 @@ bool Audio::cleanUp()
 		Mix_FreeMusic(music);
 	}
 
-	doubleNode<Mix_Chunk*>* item = fx.getFirst();
-	for(; item != NULL; item = item->next)
+	doubleNode<Mix_Chunk*>* item;
+	for(item = fx.getFirst(); item != NULL; item = item->next)
 		Mix_FreeChunk(item->data);
 
 	fx.clear();
@@ -68,13 +76,17 @@ bool Audio::cleanUp()
 	Mix_CloseAudio();
 	Mix_Quit();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
 	return true;
 }
 
 // Play a music file
-bool Audio::playMusic(const char* path, float fade_time)
+bool Audio::PlayMusic(const char* path, float fade_time)
 {
 	bool ret = true;
+
+	if(!active)
+		return false;
 
 	if(music != NULL)
 	{
@@ -91,7 +103,7 @@ bool Audio::playMusic(const char* path, float fade_time)
 		Mix_FreeMusic(music);
 	}
 
-	music = Mix_LoadMUS(path);
+	music = Mix_LoadMUS_RW(app->fs->Load(path), 1);
 
 	if(music == NULL)
 	{
@@ -102,7 +114,7 @@ bool Audio::playMusic(const char* path, float fade_time)
 	{
 		if(fade_time > 0.0f)
 		{
-			if(Mix_FadeInMusic(music, -1, fade_time * 1000.0f) < 0)
+			if(Mix_FadeInMusic(music, -1, (int) (fade_time * 1000.0f)) < 0)
 			{
 				LOG("Cannot fade in music %s. Mix_GetError(): %s", path, Mix_GetError());
 				ret = false;
@@ -123,10 +135,14 @@ bool Audio::playMusic(const char* path, float fade_time)
 }
 
 // Load WAV
-unsigned int Audio::loadFx(const char* path)
+unsigned int Audio::LoadFx(const char* path)
 {
 	unsigned int ret = 0;
-	Mix_Chunk* chunk = Mix_LoadWAV(path);
+
+	if(!active)
+		return 0;
+
+	Mix_Chunk* chunk = Mix_LoadWAV_RW(app->fs->Load(path), 1);
 
 	if(chunk == NULL)
 	{
@@ -142,9 +158,12 @@ unsigned int Audio::loadFx(const char* path)
 }
 
 // Play WAV
-bool Audio::playFx(unsigned int id, int repeat)
+bool Audio::PlayFx(unsigned int id, int repeat)
 {
 	bool ret = false;
+
+	if(!active)
+		return false;
 
 	if(id > 0 && id <= fx.count())
 	{

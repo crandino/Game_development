@@ -3,22 +3,22 @@
 
 #include <assert.h>
 
-template <class LIST_TYPE>
-void swap(LIST_TYPE &a, LIST_TYPE &b) {
+template <class TYPE>
+void swap(TYPE &a, TYPE &b) {
 
-	LIST_TYPE tmp;
+	TYPE tmp;
 	tmp = a;
 	a = b;
 	b = tmp;
 }
 
-template <class LIST_TYPE>
+template <class TYPE>
 struct doubleNode {
-	LIST_TYPE data;
-	doubleNode<LIST_TYPE>* next;
-	doubleNode<LIST_TYPE>* previous;
+	TYPE data;
+	doubleNode<TYPE>* next;
+	doubleNode<TYPE>* previous;
 
-	inline doubleNode(const LIST_TYPE &_data)
+	inline doubleNode(const TYPE &_data)
 	{
 		data = _data;
 		next = previous = NULL;
@@ -27,14 +27,14 @@ struct doubleNode {
 	~doubleNode()
 	{ }
 };
- 
-template <class LIST_TYPE>
+
+template <class TYPE>
 class DList {
 
 private:
 
-	doubleNode<LIST_TYPE>* start;
-	doubleNode<LIST_TYPE>* end;
+	doubleNode<TYPE>* start;
+	doubleNode<TYPE>* end;
 	unsigned int size;
 
 public:
@@ -58,9 +58,9 @@ public:
 	b.add("hola");
 	*/
 	 
-	const DList<LIST_TYPE>& operator+= (DList &list_to_add)
+	const DList<TYPE>& operator+= (DList &list_to_add)
 	{
-		doubleNode<LIST_TYPE> *item_to_add = list_to_add.getFirst();
+		doubleNode<TYPE> *item_to_add = list_to_add.getFirst();
 
 		while (item_to_add != NULL)
 		{
@@ -76,10 +76,10 @@ public:
 		return size;
 	}
 
-	unsigned int add(const LIST_TYPE &new_data)
+	unsigned int add(const TYPE &new_data)
 	{
-		doubleNode<LIST_TYPE> *new_node;
-		new_node = new doubleNode<LIST_TYPE>(new_data);
+		doubleNode<TYPE> *new_node;
+		new_node = new doubleNode<TYPE>(new_data);
 		new_node->data = new_data;
 
 		if (start != NULL)
@@ -97,13 +97,13 @@ public:
 	
 	}
 
-	doubleNode<LIST_TYPE>* getNodeAtPos(unsigned int _pos) const
+	doubleNode<TYPE>* getNodeAtPos(unsigned int _pos) const
 	{
 		// Node 1 is zero, node 2 is one, etc.
 		if (start != NULL && _pos < count())
 		{
 			unsigned int pos_counter = 0;
-			doubleNode<LIST_TYPE>* tmp = start;
+			doubleNode<TYPE>* tmp = start;
 			
 			while (pos_counter != _pos)
 			{
@@ -118,11 +118,11 @@ public:
 	/**
 	* Find by index (by Ricard)
 	*/
-	bool at(unsigned int index, LIST_TYPE &new_data) const
+	bool at(unsigned int index, TYPE &new_data) const
 	{
 		bool ret = false;
 		unsigned int i = 0;
-		doubleNode<LIST_TYPE>*   searching_node = start;
+		doubleNode<TYPE>*   searching_node = start;
 
 		for (unsigned int i = 0; i < index - 1 && searching_node != NULL; ++i)
 			searching_node = searching_node->next;
@@ -136,7 +136,7 @@ public:
 		return ret;
 	}
 
-	bool del(doubleNode<LIST_TYPE> *node_to_delete)
+	bool del(doubleNode<TYPE> *node_to_delete)
 	{
 		if (start != NULL && node_to_delete != NULL)
 		{
@@ -168,8 +168,8 @@ public:
 
 	void clear()
 	{
-		doubleNode<LIST_TYPE> *item = start;
-		doubleNode<LIST_TYPE> *item_next;
+		doubleNode<TYPE> *item = start;
+		doubleNode<TYPE> *item_next;
 
 		while (item != NULL)
 		{
@@ -183,11 +183,11 @@ public:
 	
 	}
 
-	bool isOnList(const doubleNode<LIST_TYPE> *node_to_check) const
+	bool isOnList(const doubleNode<TYPE> *node_to_check) const
 	{
 		if (start != NULL && node_to_check != NULL)
 		{
-			doubleNode<LIST_TYPE> *item = start;
+			doubleNode<TYPE> *item = start;
 			while (item != NULL)
 			{
 				if (item->data == node_to_check->data)
@@ -202,7 +202,7 @@ public:
 	{
 		if (position < count())
 		{
-			DList<LIST_TYPE> tmp_list;
+			DList<TYPE> tmp_list;
 			for (unsigned int i = position; i < count(); i++)
 			{
 				tmp_list.add(getNodeAtPos(i)->data);
@@ -238,8 +238,8 @@ public:
 	unsigned int sort_reference()
 	{
 		unsigned int counter = 0;
-		doubleNode<LIST_TYPE> *first_node;
-		doubleNode<LIST_TYPE> *second_node;
+		doubleNode<TYPE> *first_node;
+		doubleNode<TYPE> *second_node;
 
 		for (unsigned int i = 0; i < size - 1; i++)
 		{
@@ -278,24 +278,24 @@ public:
 	}
 
 
-	LIST_TYPE& operator[] (unsigned int index)
+	TYPE& operator[] (unsigned int index)
 	{
 		assert(index < size);
 		return getNodeAtPos(index)->data;
 	}
 
-	const LIST_TYPE& operator[] (unsigned int index) const
+	const TYPE& operator[] (unsigned int index) const
 	{
 		assert(index < size);
 		return getNodeAtPos(index)->data;
 	}
 
-	doubleNode<LIST_TYPE>* getFirst() const
+	doubleNode<TYPE>* getFirst() const
 	{
 		return start;
 	}
 
-	doubleNode<LIST_TYPE>* getLast() const
+	doubleNode<TYPE>* getLast() const
 	{
 		return end;
 	}
@@ -303,7 +303,7 @@ public:
 	void info() const
 	{
 		if (start != NULL) {
-			doubleNode<LIST_TYPE>* tmp = start;
+			doubleNode<TYPE>* tmp = start;
 			unsigned int node_num = 1;
 			while (tmp != NULL)
 			{

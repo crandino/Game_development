@@ -1,0 +1,17 @@
+<!-- Config file for the game -->
+
+<config>
+
+  <!-- Each module has its own node. Separate configuration -->
+  <input>
+    
+  </input>
+
+  <window>
+    <resolution width="640" height="480" />
+    <name>My super awesome game with XML</name>
+  </window>
+	
+  
+  
+</config>

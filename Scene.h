@@ -20,13 +20,13 @@ public:
 	// Called before the first frame
 	bool start();
 
-	// Called before all Updates
+	// Called before all updates
 	bool preUpdate();
 
 	// Called each loop iteration
 	bool update(float dt);
 
-	// Called before all Updates
+	// Called before all updates
 	bool postUpdate();
 
 	// Called before quitting

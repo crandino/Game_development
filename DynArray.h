@@ -1,24 +1,27 @@
 #ifndef __DYNARRAY_H__
 #define __DYNARRAY_H__
 
-#include <assert.h>
+#include <assert.h> 
 #include "DList.h"
 
 #define DYN_ARRAY_BLOCK_SIZE 16
 
-template <class DYNARRAY_TYPE>
+template <class TYPE>
 class DynArray {
 
 private:
 
-	DYNARRAY_TYPE *data;
+	TYPE *data;
 	unsigned int allocated_memory;
 	unsigned int num_elements;
 
 	void reallocate(unsigned int new_mem_size)
 	{
 		allocated_memory = new_mem_size;
-		DYNARRAY_TYPE *tmp = new DYNARRAY_TYPE[allocated_memory];
+		TYPE *tmp = new TYPE[allocated_memory];
+
+	/*	if (num_elements > allocated_memory)
+			num_elements = allocated_memory;*/
 
 		if (data != NULL)
 		{
@@ -33,24 +36,24 @@ private:
 public:
 
 	// Constructors
-	DynArray<DYNARRAY_TYPE>() : data(NULL), allocated_memory(0), num_elements(0)
+	DynArray<TYPE>() : data(NULL), allocated_memory(0), num_elements(0)
 	{
 		reallocate(DYN_ARRAY_BLOCK_SIZE);
 	}
 
-	DynArray<DYNARRAY_TYPE>(unsigned int new_memory_size) : data(NULL), num_elements(0)
+	DynArray<TYPE>(unsigned int new_memory_size) : data(NULL), num_elements(0)
 	{
 		reallocate(new_memory_size);
 	}
 
-	DynArray<DYNARRAY_TYPE>(const DynArray &array) : data(NULL), allocated_memory(0), num_elements(0)
+	DynArray<TYPE>(const DynArray &array) : data(NULL), allocated_memory(0), num_elements(0)
 	{
 		reallocate(array.allocated_memory);
 		for (unsigned int i = 0; i < array.num_elements; i++)
 			pushBack(array.data[i]);
 	}
 
-	~DynArray<DYNARRAY_TYPE>()
+	~DynArray<TYPE>()
 	{
 		delete[] data;
 	}
@@ -66,7 +69,7 @@ public:
 		return (*this);
 	}
 
-	void pushBack(DYNARRAY_TYPE new_value)
+	void pushBack(TYPE new_value)
 	{
 		if (num_elements == allocated_memory)
 			reallocate(allocated_memory + 1);
@@ -75,7 +78,7 @@ public:
 		num_elements++;
 	}
 
-	bool pop(DYNARRAY_TYPE &value)
+	bool pop(TYPE &value)
 	{
 		// When the element is deleted, it is necessary to return a copy of that element.
 		if (data != NULL && num_elements > 0)
@@ -90,7 +93,7 @@ public:
 	{
 		if (position <= num_elements)
 		{
-			DYNARRAY_TYPE *tmp = new DYNARRAY_TYPE[allocated_memory];
+			TYPE *tmp = new TYPE[allocated_memory];
 			for (unsigned int i = 0; i < num_elements; i++)
 			{
 				tmp[i] = data[i];
@@ -120,7 +123,7 @@ public:
 		if (position <= num_elements)
 		{ 
 			unsigned int num_elements_inserted = array_inserted.getNumElements();
-			DYNARRAY_TYPE *tmp = new DYNARRAY_TYPE[num_elements + num_elements_inserted];
+			TYPE *tmp = new TYPE[num_elements + num_elements_inserted];
 
 			if (num_elements + num_elements_inserted > allocated_memory)
 				reallocate(num_elements + num_elements_inserted);
@@ -142,12 +145,6 @@ public:
 		}
 		return false;
 	}
-
-	//void insertList(const DList &list)
-	//{
-	//	if (list.count() > allocated_memory - num_elements)
-	//		reallocate(num_elements + list.count())
-	//}
 
 	void flip()
 	{
@@ -318,14 +315,14 @@ public:
 		printf("%s: %d\n\n", "Allocated memory", allocated_memory);
 	}
 
-	DYNARRAY_TYPE& operator[] (unsigned int index)
+	TYPE& operator[] (unsigned int index)
 	{
 		// For p[1] = 15;
 		assert(index < num_elements);
 		return data[index];
 	}
 
-	const DYNARRAY_TYPE& operator[] (unsigned int index) const
+	const TYPE& operator[] (unsigned int index) const
 	{
 		// For printf("%d", p[1]);
 		assert(index < num_elements);

@@ -25,10 +25,10 @@ public:
 	void setTitle(const char* new_title);
 
 	// Retrive window size
-	void getWindowSize(unsigned int& width, unsigned int& height) const;
+	void getWindowSize(uint& width, uint& height) const;
 
 	// Retrieve window scale
-	unsigned int getScale() const;
+	uint getScale() const;
 
 public:
 	//The window we'll be rendering to
@@ -38,10 +38,10 @@ public:
 	SDL_Surface* screen_surface;
 
 private:
-	String				title;
-	unsigned int		width;
-	unsigned int		height;
-	unsigned int		scale;
+	p2SString	title;
+	uint		width;
+	uint		height;
+	uint		scale;
 };
 
 #endif // __WINDOW_H__

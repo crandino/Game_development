@@ -1,8 +1,9 @@
-#ifndef __APPLICATION_H__
-#define __APPLICATION_H__
+#ifndef __APP_H__
+#define __APP_H__
 
 #include "DList.h"
 #include "Module.h"
+#include "PugiXml\src\pugixml.hpp"
 
 // Modules
 class Window;
@@ -13,15 +14,15 @@ class Audio;
 class FileSystem;
 class Scene;
 
-class Application
+class App
 {
 public:
 
 	// Constructor
-	Application(int argc, char* args[]);
+	App(int argc, char* args[]);
 
 	// Destructor
-	virtual ~Application();
+	virtual ~App();
 
 	// Called before render is available
 	bool awake();
@@ -38,8 +39,8 @@ public:
 	// Add a new module to handle
 	void addModule(Module* module);
 
-	int getArgc() const;
-	const char* getArgv(int index) const;
+	int gerArgc() const;
+	const char* gerArgv(int index) const;
 
 private:
 
@@ -60,25 +61,28 @@ private:
 
 public:
 
-	unsigned int		frames;
+	uint				frames;
 	float				dt;
+	pugi::xml_document	config_file;
+	pugi::xml_node		config;
 
+public:
 	// Modules
-	Window*				win;
-	Input*				input;
-	Render*				render;
-	Textures*			tex;
-	Audio*				audio;
-	Scene*				scene;
-	FileSystem*		    fsystem;
+	Window*			win;
+	Input*			input;
+	Render*			render;
+	Textures*		tex;
+	Audio*			audio;
+	Scene*			scene;
+	FileSystem*		fs;
 
 private:
 
-	DList<Module*>  	modules;
+	DList<Module*>	 modules;
 	int					argc;
 	char**				args;
 };
 
-extern Application* app;
+extern App *app;
 
 #endif
