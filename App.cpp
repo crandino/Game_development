@@ -10,10 +10,14 @@
 #include "FileSystem.h"
 #include "App.h"
 
+#include <iostream> 
+#include <sstream> 
+
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
 	frames = 0;
+	want_to_save = want_to_load = false;
 
 	input = new Input();
 	win = new Window();
@@ -21,7 +25,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	tex = new Textures();
 	audio = new Audio();
 	scene = new Scene();
-	fs = new FileSystem("data.zip");
+	fs = new FileSystem();
 
 	// Ordered for awake / start / update
 	// Reverse order of cleanUp
@@ -55,8 +59,24 @@ App::~App()
 
 void App::addModule(Module* module)
 {
-	module->Init();
+	module->init();
 	modules.add(module);
+}
+
+pugi::xml_node App::loadConfig(pugi::xml_document& config_file) const
+{
+	// --- load config file ---
+	char* buf;
+	int size = app->fs->load("config.xml", &buf);
+	pugi::xml_parse_result result = config_file.load_buffer(buf, size);
+	RELEASE(buf);
+
+	if (result == NULL)
+	{
+		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
+	}
+
+	return config_file.child("config");
 }
 
 // Called before render is available
@@ -64,33 +84,16 @@ bool App::awake()
 {
 	bool ret = true;
 
-	// --- load config file ---
-	char* buf;
-	int size = app->fs->Load("config.xml", &buf);
-	pugi::xml_parse_result result = config_file.load_buffer(buf, size);
-	RELEASE(buf);
+	pugi::xml_document config_file;
+	pugi::xml_node config_node;
 
-	if(result == NULL)
-	{
-		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
-		ret = false;
-	}
-	else
-		config = config_file.child("config");
-	// ---
+	config_node = loadConfig(config_file);
 
-	doubleNode<Module*>* item;
-	item = modules.getFirst();
-
-	pugi::xml_node module_node;
+	doubleNode<Module*>* item = modules.getFirst();
 
 	while(item != NULL && ret == true)
 	{
-		// TODO 1: Every awake to receive a xml node with their section of the config file if exists
-
-		module_node = config.child(item->data->name.GetString());
-
-		ret = item->data->awake();
+		ret = item->data->awake(config_node.child(item->data->name.GetString()));
 		item = item->next;
 	}
 
@@ -143,6 +146,8 @@ void App::prepareUpdate()
 // ---------------------------------------------
 void App::finishUpdate()
 {
+	if (want_to_load == true) loadGameNow();
+	if (want_to_save == true) saveGameNow();
 }
 
 // Call modules before each loop iteration
@@ -239,4 +244,94 @@ const char* App::gerArgv(int index) const
 		return args[index];
 	else
 		return NULL;
+}
+
+// Load/Save
+void App::loadGame(const char *file)
+{
+	want_to_load = true;
+	load_game.create("%s%s", app->fs->getSaveDirectory(), file);
+}
+
+void App::saveGame(const char *file) const
+{
+	want_to_save = true;
+	save_game.create("%s%s", app->fs->getSaveDirectory(), file);
+}
+
+bool App::loadGameNow()
+{
+	bool ret = true;
+
+	char *buffer;
+	uint size = fs->load(load_game.GetString(), &buffer);
+
+	if (size > 0)
+	{
+		// We create the necessary elements from pugiXML
+		pugi::xml_document	data;
+		pugi::xml_node		root;
+
+		pugi::xml_parse_result result = data.load_buffer(buffer, size);
+		RELEASE(buffer);
+
+		if (result != NULL)
+		{
+			LOG("Loading new Game State from %s...", load_game.GetString());
+			root = data.child("game_state");
+
+			doubleNode<Module*> *item = modules.getFirst();
+			for (; item != NULL, ret != false; item = item->next)
+			{
+				ret = item->data->load(root.child(item->data->name.GetString()));
+			}
+
+			data.reset();
+			if (ret == true)
+				LOG("...finished loading");
+			else
+				LOG("...loading process interrupted with error on module %s", (item != NULL) ? item->data->name.GetString() : "unknown");
+		}
+		else
+			LOG("Could not parse game state xml file %s. pugi error: %s", load_game.GetString(), result.description());
+	}
+	else
+		LOG("Could not load game state xml file %s", load_game.GetString());
+
+	want_to_load = false;
+	return ret;
+}
+
+bool App::saveGameNow() const
+{
+	bool ret = true;
+
+	LOG("Saving Game State on %s...", save_game.GetString());
+
+	// Necesary elements from PugiXML
+	pugi::xml_document data;
+	pugi::xml_node	   root;
+
+	root = data.append_child("game_state");
+
+	doubleNode<Module*> *item = modules.getFirst();
+	for (; item != NULL && ret != false; item = item->next)
+	{
+		ret = item->data->save(root.append_child(item->data->name.GetString()));
+	}
+
+	if (ret != false)
+	{
+		std::stringstream stream;
+		data.save(stream);
+
+		fs->save(save_game.GetString(), stream.str().c_str(), stream.str().length());
+		LOG("... finishing saving %s.", save_game.GetString());		
+	}
+	else
+		LOG("Save process halted from an error in module %s", (item != NULL) ? item->data->name.GetString() : "unknown");
+
+	data.reset();
+	want_to_save = false;
+	return ret;
 }

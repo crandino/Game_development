@@ -2,39 +2,30 @@
 #define __FILESYSTEM_H__
 
 #include "Module.h"
+#include "PugiXml\src\pugixml.hpp"
 
 struct SDL_RWops;
-
 int close_sdl_rwops(SDL_RWops *rw);
 
 class FileSystem : public Module
 {
 public:
 
-	FileSystem(const char* game_path);
+	FileSystem();
+	~FileSystem();
 
-	// Destructor
-	virtual ~FileSystem();
-
-	// Called before render is available
-	bool awake();
-
-	// Called before quitting
+	bool awake(pugi::xml_node &node);
 	bool cleanUp();
 
-	// Utility functions
-	bool addPath(const char* path_or_zip);
-	bool Exists(const char* file) const;
-	bool IsDirectory(const char* file) const;
+	bool addPath(const char *path_or_zip, const char *mount_point = NULL);
+	uint load(const char* file, char **buffer) const;
+	SDL_RWops *load(const char* file) const;
+	uint save(const char *file, const char *buffer, uint size) const;
 
-	// Open for Read/Write
-	unsigned int Load(const char* file, char** buffer) const;
-	SDL_RWops* Load(const char* file) const;
-
-	unsigned int Save(const char* file, const char* buffer, unsigned int size) const;
-
-private:
-
+	const char *getSaveDirectory() const;
+	bool isDirectory(const char *dir) const;
+	bool exists(const char *file) const;
 };
 
-#endif // __FILESYSTEM_H__
+
+#endif //!__FILESYSTEM_H__

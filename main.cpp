@@ -74,7 +74,6 @@ App *app = NULL;
 
 int main(int argc, char** argv)
 {
-
 	LOG("======> Application initiating <=======");
 
 	MainStates state = CREATE;

@@ -7,6 +7,7 @@
 #define __MODULE_H__
 
 #include "p2SString.h"
+#include "PugiXml\src\pugixml.hpp"
 
 class App;
 
@@ -17,13 +18,13 @@ public:
 	Module() : active(false)
 	{}
 
-	void Init()
+	void init()
 	{
 		active = true;
 	}
 
 	// Called before render is available
-	virtual bool awake()
+	virtual bool awake(pugi::xml_node &node)
 	{
 		return true;
 	}
@@ -54,6 +55,17 @@ public:
 
 	// Called before quitting
 	virtual bool cleanUp()
+	{
+		return true;
+	}
+
+	// Load / Save
+	bool load(pugi::xml_node&)
+	{
+		return true;
+	}
+
+	bool save(pugi::xml_node&) const 
 	{
 		return true;
 	}

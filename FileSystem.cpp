@@ -1,130 +1,113 @@
-#include "p2Defs.h"
-#include "App.h"
-#include "p2Log.h"
 #include "FileSystem.h"
-#include "PhysFS/include/physfs.h"
-#include "SDL/include/SDL.h"
+#include "p2Log.h"
+#include "SDL\include\SDL.h"
+#include "PhysFS\include\physfs.h"
 
-#pragma comment( lib, "PhysFS/libx86/physfs.lib" )
-
-FileSystem::FileSystem(const char* game_path) : Module()
+FileSystem::FileSystem()
 {
 	name.create("file_system");
 
-	// need to be created before awake so other modules can use it
-	char* base_path = SDL_GetBasePath();
+	// PHYSFS must be initialized before other modules awake,
+	// because it will be used by them.
+	char *base_path = SDL_GetBasePath();
 	PHYSFS_init(base_path);
 	SDL_free(base_path);
 
 	addPath(".");
-	addPath(game_path);
 }
 
-// Destructor
 FileSystem::~FileSystem()
 {
 	PHYSFS_deinit();
 }
 
-// Called before render is available
-bool FileSystem::awake()
+bool FileSystem::awake(pugi::xml_node &node)
 {
-	LOG("Loading File System");
 	bool ret = true;
 
-	// Ask SDL for a write dir
-	char* write_path = SDL_GetPrefPath(ORGANIZATION, APPNAME);
+	for (pugi::xml_node path = node.child("path"); path ; path = path.next_sibling("path"))
+		addPath(path.child_value());
 
-	if(PHYSFS_setWriteDir(write_path) == 0)
-		LOG("File System error while creating write dir: %s\n", PHYSFS_getLastError());
+	char *write_dir = SDL_GetPrefPath("Carlos", "Game_development");
 
-	SDL_free(write_path);
+	if (PHYSFS_setWriteDir(write_dir) == 0)
+	{
+		LOG("%s,%s","Error on setting Write Dir. Error:", PHYSFS_getLastError());
+		ret = false;
+	}
+	else
+	{
+		LOG("%s %s", "Write directory is ", write_dir);
+		addPath(write_dir, getSaveDirectory());
+	}
+
+	SDL_free(write_dir);
+
 
 	return ret;
 }
 
-// Called before quitting
 bool FileSystem::cleanUp()
 {
-	//LOG("Freeing File System subsystem");
-
 	return true;
 }
 
-// Add a new zip file or folder
-bool FileSystem::addPath(const char* path_or_zip)
+bool FileSystem::addPath(const char *path_or_zip, const char *mount_point)
 {
-	bool ret = false;
+	bool ret = true;
 
-	if(PHYSFS_mount(path_or_zip, NULL, 1) == 0)
-		LOG("File System error while adding a path or zip: %s\n", PHYSFS_getLastError());
-	else
-		ret = true;
+	if (PHYSFS_mount(path_or_zip, mount_point, 1) == 0)
+	{
+		LOG("%s %s", "Failure on mounting or adding path", path_or_zip);
+		LOG("%s", "Error:", PHYSFS_getLastError());
+		ret = false;
+	}
 
 	return ret;
 }
 
-// Check if a file exists
-bool FileSystem::Exists(const char* file) const
+uint FileSystem::load(const char* file, char **buffer) const
 {
-	return PHYSFS_exists(file) != 0;
-}
+	uint ret = 0;
 
-// Check if a file is a directory
-bool FileSystem::IsDirectory(const char* file) const
-{
-	return PHYSFS_isDirectory(file) != 0;
-}
-
-// Read a whole file and put it in a new buffer
-unsigned int FileSystem::Load(const char* file, char** buffer) const
-{
-	unsigned int ret = 0;
-
-	PHYSFS_file* fs_file = PHYSFS_openRead(file);
-
-	if(fs_file != NULL)
+	PHYSFS_file *file_handle = PHYSFS_openRead(file);
+	if (file_handle != NULL)
 	{
-		PHYSFS_sint32 size = PHYSFS_fileLength(fs_file);
-
-		if(size > 0)
+		PHYSFS_sint64 size = PHYSFS_fileLength(file_handle);
+		if (size > 0)
 		{
-			*buffer = new char[size];
-			int readed = PHYSFS_read(fs_file, *buffer, 1, size);
-			if(readed != size)
+			*buffer = new char[(uint)size];
+			PHYSFS_sint64 bytes_readed = PHYSFS_read(file_handle, *buffer, 1, size);
+			if (bytes_readed != size)
 			{
-				LOG("File System error while reading from file %s: %s\n", file, PHYSFS_getLastError());
+				LOG("File system error while reading from file %s: %s", file, PHYSFS_getLastError());
 				RELEASE(buffer);
 			}
 			else
-				ret = readed;
+				ret = (uint)size;
 		}
 
-		if(PHYSFS_close(fs_file) == 0)
-			LOG("File System error while closing file %s: %s\n", file, PHYSFS_getLastError());
+		if (PHYSFS_close(file_handle) == 0)
+			LOG("File %s is not closed properly. Error: %s", file, PHYSFS_getLastError());
 	}
-	else
-		LOG("File System error while opening file %s: %s\n", file, PHYSFS_getLastError());
 
 	return ret;
 }
 
-// Read a whole file and put it in a new buffer
-SDL_RWops* FileSystem::Load(const char* file) const
+SDL_RWops *FileSystem::load(const char *file) const
 {
-	char* buffer;
-	int size = Load(file, &buffer);
+	SDL_RWops *ret = NULL;
+	char *buffer;
+	uint size = load(file, &buffer);
 
-	if(size > 0)
+	if (size > 0)
 	{
-		SDL_RWops* r = SDL_RWFromConstMem(buffer, size);
-		if(r != NULL)
-			r->close = close_sdl_rwops;
-
-		return r;
+		ret = SDL_RWFromConstMem(buffer, size);
+		if (ret != NULL)
+			ret->close = close_sdl_rwops;
 	}
-	else
-		return NULL;
+	
+	return ret;
 }
 
 int close_sdl_rwops(SDL_RWops *rw)
@@ -134,26 +117,39 @@ int close_sdl_rwops(SDL_RWops *rw)
 	return 0;
 }
 
-// Save a whole buffer to disk
-unsigned int FileSystem::Save(const char* file, const char* buffer, unsigned int size) const
+uint FileSystem::save(const char *file, const char *buffer, uint size) const
 {
-	unsigned int ret = 0;
+	uint ret = 0;
 
-	PHYSFS_file* fs_file = PHYSFS_openWrite(file);
-
-	if(fs_file != NULL)
+	PHYSFS_file *file_handle = PHYSFS_openWrite(file);
+	if (file_handle != NULL)
 	{
-		unsigned int written = PHYSFS_write(fs_file, (const void*)buffer, 1, size);
-		if(written != size)
-			LOG("File System error while writing to file %s: %s\n", file, PHYSFS_getLastError());
+		PHYSFS_sint64 bytes_written = PHYSFS_write(file_handle, (const void*) buffer, 1, size);
+		if (bytes_written != size)
+			LOG("Failure on writing %s. Error: %s", file, PHYSFS_getLastError());
 		else
-			ret = written;
+			ret = (uint)size;
 
-		if(PHYSFS_close(fs_file) == 0)
-			LOG("File System error while closing file %s: %s\n", file, PHYSFS_getLastError());
+		if (PHYSFS_close(file_handle) == 0)
+			LOG("File System can not close file %s. Error: %s", file, PHYSFS_getLastError());
 	}
 	else
-		LOG("File System error while opening file %s: %s\n", file, PHYSFS_getLastError());
-
+		LOG("File System failure while opening file %s. Error: %s", file, PHYSFS_getLastError());
+	
 	return ret;
+}
+
+bool FileSystem::isDirectory(const char *dir) const
+{
+	return (PHYSFS_isDirectory(dir) == 0) ? false : true;
+}
+
+bool FileSystem::exists(const char *file) const
+{
+	return (PHYSFS_exists(file) == 0) ? false : true;
+}
+
+const char *FileSystem::getSaveDirectory() const
+{
+	return "save/";
 }

@@ -19,7 +19,7 @@ Audio::~Audio()
 {}
 
 // Called before render is available
-bool Audio::awake()
+bool Audio::awake(pugi::xml_node &node)
 {
 	LOG("Loading Audio Mixer");
 	bool ret = true;
@@ -103,7 +103,7 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 		Mix_FreeMusic(music);
 	}
 
-	music = Mix_LoadMUS_RW(app->fs->Load(path), 1);
+	music = Mix_LoadMUS_RW(app->fs->load(path), 1);
 
 	if(music == NULL)
 	{
@@ -142,7 +142,7 @@ unsigned int Audio::LoadFx(const char* path)
 	if(!active)
 		return 0;
 
-	Mix_Chunk* chunk = Mix_LoadWAV_RW(app->fs->Load(path), 1);
+	Mix_Chunk* chunk = Mix_LoadWAV_RW(app->fs->load(path), 1);
 
 	if(chunk == NULL)
 	{

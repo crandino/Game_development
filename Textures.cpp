@@ -18,7 +18,7 @@ Textures::~Textures()
 {}
 
 // Called before render is available
-bool Textures::awake()
+bool Textures::awake(pugi::xml_node &node)
 {
 	LOG("Init Image library");
 	bool ret = true;
@@ -63,7 +63,7 @@ bool Textures::cleanUp()
 SDL_Texture* const Textures::Load(const char* path)
 {
 	SDL_Texture* texture = NULL;
-	SDL_Surface* surface = IMG_Load_RW(app->fs->Load(path), 1);
+	SDL_Surface* surface = IMG_Load_RW(app->fs->load(path), 1);
 
 	if(surface == NULL)
 	{

@@ -18,7 +18,7 @@ public:
 	virtual ~Audio();
 
 	// Called before render is available
-	bool awake();
+	bool awake(pugi::xml_node&);
 
 	// Called before quitting
 	bool cleanUp();

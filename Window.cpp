@@ -18,7 +18,7 @@ Window::~Window()
 { }
 
 // Called before render is available
-bool Window::awake()
+bool Window::awake(pugi::xml_node &node)
 {
 	LOG("Init SDL window & surface");
 	bool ret = true;
@@ -32,26 +32,26 @@ bool Window::awake()
 	{
 		//Create window
 		Uint32 flags = SDL_WINDOW_SHOWN;
-		width = SCREEN_WIDTH;
-		height = SCREEN_HEIGHT;
-		scale = SCALE;
+		width = node.child("resolution").attribute("width").as_uint();
+		height = node.child("resolution").attribute("height").as_uint();
+		scale = node.child("resolution").attribute("scale").as_uint();
 
-		if(R_FULLSCREEN == true)
+		if (node.child("properties").attribute("fullscreen").as_bool())
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
-		if(R_BORDERLESS == true)
+		if (node.child("properties").attribute("borderless").as_bool())
 		{
 			flags |= SDL_WINDOW_BORDERLESS;
 		}
 
-		if(R_RESIZABLE == true)
+		if (node.child("properties").attribute("resizable").as_bool())
 		{
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
 
-		if(R_FULLSCR_WINDOWED == true)
+		if (node.child("properties").attribute("windowed").as_bool())
 		{
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
@@ -67,7 +67,7 @@ bool Window::awake()
 		{
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
-			setTitle(app->config.child("name").child_value());
+			setTitle(node.child("name").child_value());
 		}
 	}
 

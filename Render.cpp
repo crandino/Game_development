@@ -20,7 +20,7 @@ Render::~Render()
 {}
 
 // Called before render is available
-bool Render::awake()
+bool Render::awake(pugi::xml_node &node)
 {
 	LOG("Create SDL rendering context");
 	bool ret = true;

@@ -8,10 +8,16 @@
   </input>
 
   <window>
-    <resolution width="640" height="480" />
+    <resolution width="640" height="480" scale="1"  />
+    <properties borderless='false'
+                fullscreen='false' 
+                resizable='false'
+                windowed='false' />
     <name>My super awesome game with XML</name>
   </window>
-	
-  
+
+  <file_system>
+    <path>data.zip</path>
+  </file_system>
   
 </config>

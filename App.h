@@ -42,6 +42,10 @@ public:
 	int gerArgc() const;
 	const char* gerArgv(int index) const;
 
+	void loadGame(const char *file);
+	void saveGame(const char *file) const;
+	void *getSaveGames(DList<p2SString> &list_saved_games) const;
+
 private:
 
 	// Call modules before each loop iteration
@@ -59,6 +63,12 @@ private:
 	// Call modules after each loop iteration
 	bool postUpdate();
 
+	// Return a node with the corresponding configuration node
+	pugi::xml_node loadConfig(pugi::xml_document&) const;
+
+	bool saveGameNow() const;
+	bool loadGameNow();
+
 public:
 
 	uint				frames;
@@ -66,21 +76,25 @@ public:
 	pugi::xml_document	config_file;
 	pugi::xml_node		config;
 
-public:
 	// Modules
-	Window*			win;
-	Input*			input;
-	Render*			render;
-	Textures*		tex;
-	Audio*			audio;
-	Scene*			scene;
-	FileSystem*		fs;
+	Window*				win;
+	Input*				input;
+	Render*				render;
+	Textures*			tex;
+	Audio*				audio;
+	Scene*				scene;
+	FileSystem*			fs;
 
 private:
 
-	DList<Module*>	 modules;
+	DList<Module*>		modules;
 	int					argc;
 	char**				args;
+
+	bool				want_to_load;
+	mutable bool		want_to_save;
+	p2SString			load_game;
+	mutable p2SString	save_game;
 };
 
 extern App *app;
