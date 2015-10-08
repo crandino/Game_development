@@ -44,6 +44,24 @@ bool Scene::preUpdate()
 // Called each loop iteration
 bool Scene::update(float dt)
 {
+	if (app->input->getKey(SDL_SCANCODE_L) == KEY_DOWN)
+		app->loadGame("save_game.xml");
+
+	if (app->input->getKey(SDL_SCANCODE_S) == KEY_DOWN)
+		app->saveGame("save_game.xml");
+
+	if (app->input->getKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		app->render->camera.y -= 1;
+
+	if (app->input->getKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		app->render->camera.y += 1;
+
+	if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		app->render->camera.x -= 1;
+
+	if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		app->render->camera.x += 1;
+	
 	app->render->Blit(img, 0, 0);
 	return true;
 }
@@ -53,7 +71,7 @@ bool Scene::postUpdate()
 {
 	bool ret = true;
 
-	if(app->input->GetKeyDown(SDLK_ESCAPE) == true)
+	if(app->input->getKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
 	return ret;
