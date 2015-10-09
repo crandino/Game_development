@@ -117,5 +117,8 @@
     <Xml Include="config.xml">
       <Filter>Resource Files</Filter>
     </Xml>
+    <Xml Include="save_game.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

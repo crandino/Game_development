@@ -101,6 +101,25 @@ void Render::ResetViewPort()
 	SDL_RenderSetViewport(renderer, &viewport);
 }
 
+// Load / Save
+bool Render::load(pugi::xml_node &node)
+{
+	camera.x = node.child("camera").attribute("x").as_int();
+	camera.y = node.child("camera").attribute("y").as_int();
+
+	return true;
+}
+
+bool Render::save(pugi::xml_node &node) const
+{
+	pugi::xml_node cam = node.append_child("camera");
+
+	cam.append_attribute("x") = camera.x;
+	cam.append_attribute("y") = camera.y;
+
+	return true;
+}
+
 // Blit to screen
 bool Render::Blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivot_x, int pivot_y) const
 {

@@ -42,8 +42,7 @@ bool FileSystem::awake(pugi::xml_node &node)
 	}
 
 	SDL_free(write_dir);
-
-
+	
 	return ret;
 }
 

@@ -250,13 +250,13 @@ const char* App::gerArgv(int index) const
 void App::loadGame(const char *file)
 {
 	want_to_load = true;
-	load_game.create("%s%s", app->fs->getSaveDirectory(), file);
+	load_game.create("%s%s", fs->getSaveDirectory(), file);
 }
 
 void App::saveGame(const char *file) const
 {
 	want_to_save = true;
-	save_game.create("%s%s", app->fs->getSaveDirectory(), file);
+	save_game.create("%s%s", fs->getSaveDirectory(), file);
 }
 
 bool App::loadGameNow()
@@ -326,7 +326,7 @@ bool App::saveGameNow() const
 		data.save(stream);
 
 		fs->save(save_game.GetString(), stream.str().c_str(), stream.str().length());
-		LOG("... finishing saving %s.", save_game.GetString());		
+		LOG("... finishing saving %s.", save_game.GetString());
 	}
 	else
 		LOG("Save process halted from an error in module %s", (item != NULL) ? item->data->name.GetString() : "unknown");
