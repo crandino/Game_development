@@ -6,7 +6,8 @@
 
 #include "SDL/include/SDL.h"
 #include "SDL_mixer\include\SDL_mixer.h"
-#pragma comment( lib, "SDL_mixer/libx86/SDL2_mixer.lib" )
+
+#pragma comment( lib, "Motor2D/SDL_mixer/libx86/SDL2_mixer.lib" )
 
 Audio::Audio() : Module()
 {
@@ -81,7 +82,7 @@ bool Audio::cleanUp()
 }
 
 // Play a music file
-bool Audio::PlayMusic(const char* path, float fade_time)
+bool Audio::playMusic(const char* path, float fade_time)
 {
 	bool ret = true;
 
@@ -135,7 +136,7 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 }
 
 // Load WAV
-unsigned int Audio::LoadFx(const char* path)
+unsigned int Audio::loadFx(const char* path)
 {
 	unsigned int ret = 0;
 
@@ -158,7 +159,7 @@ unsigned int Audio::LoadFx(const char* path)
 }
 
 // Play WAV
-bool Audio::PlayFx(unsigned int id, int repeat)
+bool Audio::playFx(unsigned int id, int repeat)
 {
 	bool ret = false;
 

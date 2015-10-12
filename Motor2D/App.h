@@ -12,6 +12,7 @@ class Render;
 class Textures;
 class Audio;
 class FileSystem;
+class Maps;
 class Scene;
 
 class App
@@ -83,6 +84,7 @@ public:
 	Textures*			tex;
 	Audio*				audio;
 	Scene*				scene;
+	Maps*				map;
 	FileSystem*			fs;
 
 private:

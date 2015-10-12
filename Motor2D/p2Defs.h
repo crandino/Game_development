@@ -60,9 +60,7 @@ inline const char* const PATH(const char* folder, const char* file)
 }
 
 // Conf
-
 // TODO 2: move all those defines to data from the config.xml file
-//#define WINDOW_TITLE "My Game"
 #define ORGANIZATION "My Awesome Studio"
 #define APPNAME "My cool game"
 

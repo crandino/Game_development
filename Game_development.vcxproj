@@ -39,12 +39,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)PhysFS\include;$(ProjectDir)SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)PhysFS\lib\x86;$(ProjectDir)SDL\libx86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Motor2D\PhysFS\include;$(ProjectDir)Motor2D\SDL\include;$(ProjectDir)Motor2D\SDL_mixer\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Motor2D\PhysFS\lib\x86;$(ProjectDir)Motor2D\SDL\libx86;$(ProjectDir)Motor2D\SDL_mixer\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)PhysFS\include;$(ProjectDir)SDL\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)PhysFS\lib\x86;$(ProjectDir)SDL\libx86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Motor2D\PhysFS\include;$(ProjectDir)Motor2D\SDL\include;$(ProjectDir)Motor2D\SDL_mixer\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Motor2D\PhysFS\lib\x86;$(ProjectDir)Motor2D\SDL\libx86;$(ProjectDir)Motor2D\SDL_mixer\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +54,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)SDL\lib\x86\SDL2.lib;$(ProjectDir)SDL\lib\x86\SDL2main.lib;$(ProjectDir)PhysFS\libx86\physfs.lib;$(ProjectDir)PhysFS\libx86\physfs.exp;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)Motor2D\SDL\lib\x86\SDL2.lib;$(ProjectDir)Motor2D\SDL\lib\x86\SDL2main.lib;$(ProjectDir)Motor2D\SDL_mixer\libx86\SDL2_mixer.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.exp;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -69,44 +69,48 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(ProjectDir)SDL\lib\x86\SDL2.lib;$(ProjectDir)SDL\lib\x86\SDL2main.lib;$(ProjectDir)PhysFS\libx86\physfs.lib;$(ProjectDir)PhysFS\libx86\physfs.exp;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)Motor2D\SDL\lib\x86\SDL2.lib;$(ProjectDir)Motor2D\SDL\lib\x86\SDL2main.lib;$(ProjectDir)Motor2D\SDL_mixer\libx86\SDL2_mixer.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.exp;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="FileSystem.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="PugiXml\src\pugixml.cpp" />
-    <ClCompile Include="Render.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Textures.cpp" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="p2Log.cpp" />
+    <ClCompile Include="Motor2D\App.cpp" />
+    <ClCompile Include="Motor2D\Audio.cpp" />
+    <ClCompile Include="Motor2D\FileSystem.cpp" />
+    <ClCompile Include="Motor2D\Input.cpp" />
+    <ClCompile Include="Motor2D\main.cpp" />
+    <ClCompile Include="Motor2D\Maps.cpp" />
+    <ClCompile Include="Motor2D\p2Log.cpp" />
+    <ClCompile Include="Motor2D\PugiXml\src\pugixml.cpp" />
+    <ClCompile Include="Motor2D\Render.cpp" />
+    <ClCompile Include="Motor2D\Scene.cpp" />
+    <ClCompile Include="Motor2D\Textures.cpp" />
+    <ClCompile Include="Motor2D\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DList.h" />
-    <ClInclude Include="DynArray.h" />
-    <ClInclude Include="Audio.h" />
-    <ClInclude Include="FileSystem.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="App.h" />
-    <ClInclude Include="Module.h" />
-    <ClInclude Include="PugiXml\src\pugiconfig.hpp" />
-    <ClInclude Include="PugiXml\src\pugixml.hpp" />
-    <ClInclude Include="Render.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Textures.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="p2Defs.h" />
-    <ClInclude Include="p2Log.h" />
-    <ClInclude Include="p2SString.h" />
-    <ClInclude Include="Point2d.h" />
+    <ClInclude Include="Motor2D\App.h" />
+    <ClInclude Include="Motor2D\Audio.h" />
+    <ClInclude Include="Motor2D\DList.h" />
+    <ClInclude Include="Motor2D\DynArray.h" />
+    <ClInclude Include="Motor2D\FileSystem.h" />
+    <ClInclude Include="Motor2D\Input.h" />
+    <ClInclude Include="Motor2D\Maps.h" />
+    <ClInclude Include="Motor2D\Module.h" />
+    <ClInclude Include="Motor2D\p2Defs.h" />
+    <ClInclude Include="Motor2D\p2Log.h" />
+    <ClInclude Include="Motor2D\p2SString.h" />
+    <ClInclude Include="Motor2D\Point2d.h" />
+    <ClInclude Include="Motor2D\PugiXml\src\pugiconfig.hpp" />
+    <ClInclude Include="Motor2D\PugiXml\src\pugixml.hpp" />
+    <ClInclude Include="Motor2D\Render.h" />
+    <ClInclude Include="Motor2D\Scene.h" />
+    <ClInclude Include="Motor2D\Textures.h" />
+    <ClInclude Include="Motor2D\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="config.xml" />
-    <Xml Include="save_game.xml" />
+    <Xml Include="Game\config.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Game\maps\far_west.tmx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

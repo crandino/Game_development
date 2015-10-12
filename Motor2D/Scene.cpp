@@ -7,6 +7,7 @@
 #include "Render.h"
 #include "Window.h"
 #include "Scene.h"
+#include "Maps.h"
 
 Scene::Scene() : Module()
 {
@@ -29,15 +30,13 @@ bool Scene::awake(pugi::xml_node &node)
 // Called before the first frame
 bool Scene::start()
 {
-	img = app->tex->Load("textures/test.png");
-	app->audio->PlayMusic("audio/music/music_sadpiano.ogg");
+	app->map->load("far_west.tmx");
 	return true;
 }
 
 // Called each loop iteration
 bool Scene::preUpdate()
 {
-
 	return true;
 }
 
@@ -62,7 +61,19 @@ bool Scene::update(float dt)
 	if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		app->render->camera.x += 1;
 	
-	app->render->Blit(img, 0, 0);
+	app->map->draw();
+
+	int x, y;
+	app->input->getMousePosition(x, y);
+	iPoint map_coordinates = app->map->worldToMap(x - app->render->camera.x, y - app->render->camera.y);
+	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d",
+		app->map->data.width, app->map->data.height,
+		app->map->data.tile_width, app->map->data.tile_height,
+		app->map->data.tilesets.count(),
+		map_coordinates.x, map_coordinates.y);
+
+	app->win->setTitle(title.GetString());
+
 	return true;
 }
 

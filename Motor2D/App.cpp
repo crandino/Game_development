@@ -7,6 +7,7 @@
 #include "Textures.h"
 #include "Audio.h"
 #include "Scene.h"
+#include "Maps.h"
 #include "FileSystem.h"
 #include "App.h"
 
@@ -25,6 +26,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	tex = new Textures();
 	audio = new Audio();
 	scene = new Scene();
+	map = new Maps();
 	fs = new FileSystem();
 
 	// Ordered for awake / start / update
@@ -34,6 +36,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	addModule(win);
 	addModule(tex);
 	addModule(audio);
+	addModule(map);
 	addModule(scene);
 
 	// render last to swap buffer
@@ -251,12 +254,14 @@ void App::loadGame(const char *file)
 {
 	want_to_load = true;
 	load_game.create("%s%s", fs->getSaveDirectory(), file);
+	
 }
 
 void App::saveGame(const char *file) const
 {
 	want_to_save = true;
-	save_game.create("%s%s", fs->getSaveDirectory(), file);
+	//save_game.create("%s%s", fs->getSaveDirectory(), file);
+	save_game.create(file);
 }
 
 bool App::loadGameNow()
@@ -281,7 +286,7 @@ bool App::loadGameNow()
 			root = data.child("game_state");
 
 			doubleNode<Module*> *item = modules.getFirst();
-			for (; item != NULL, ret != false; item = item->next)
+			for (; item != NULL && ret != false; item = item->next)
 			{
 				ret = item->data->load(root.child(item->data->name.GetString()));
 			}

@@ -19,6 +19,12 @@ public:
 		y = p.y;
 	}
 
+	Point2d(const TYPE &px, const TYPE &py)
+	{
+		x = px;
+		y = py;
+	}
+
 	Point2d operator+ (const Point2d &p) const
 	{
 		Point2d tmp;
@@ -82,5 +88,7 @@ public:
 	}
 
 };
+
+typedef Point2d<int> iPoint;
 
 #endif // !__Point2d_H__
