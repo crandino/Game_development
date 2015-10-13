@@ -39,19 +39,34 @@ void Maps::draw()
 	SDL_Rect rect;
 
 	switch (data.type)
-		case(MAPTYPE_ORTHOGONAL) :
 	{
-		uint k = 0;
-		for (int i = 0; i < data.height; i++)
+		case(MAPTYPE_ORTHOGONAL) :
 		{
-			for (int j = 0; j < data.width; j++)
+			uint k = 0;
+			for (int i = 0; i < data.height; i++)
 			{
-				rect = tileset->getTileRect(layer->data[k++]);
-				app->render->Blit(tileset->texture, j * tileset->tile_width, i * tileset->tile_height, &rect);
+				for (int j = 0; j < data.width; j++)
+				{
+					rect = tileset->getTileRect(layer->data[k++]);
+					app->render->Blit(tileset->texture, j * tileset->tile_width, i * tileset->tile_height, &rect);
+				}
+			}
+		}
+
+		case(MAPTYPE_ISOMETRIC) :
+		{
+			uint k = 0;
+			for (int i = 0; i < data.height; i++)
+			{
+				for (int j = 0; j < data.width; j++)
+				{
+					rect = tileset->getTileRect(layer->data[k++]);
+					app->render->Blit(tileset->texture, (j-i) * (tileset->tile_width/2), (j+i) * (tileset->tile_height/2) - 160, &rect);
+				}
 			}
 		}
 	}
-	
+		
 	// TODO 10(old): Complete the draw function
 }
 

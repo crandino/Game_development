@@ -128,5 +128,8 @@
     <None Include="Game\maps\far_west.tmx">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Game\maps\iso.tmx">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
