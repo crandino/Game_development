@@ -54,7 +54,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)Motor2D\SDL\lib\x86\SDL2.lib;$(ProjectDir)Motor2D\SDL\lib\x86\SDL2main.lib;$(ProjectDir)Motor2D\SDL_mixer\libx86\SDL2_mixer.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.exp;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)Motor2D\SDL\libx86\SDL2.lib;$(ProjectDir)Motor2D\SDL\libx86\SDL2main.lib;$(ProjectDir)Motor2D\SDL_mixer\libx86\SDL2_mixer.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.lib;$(ProjectDir)Motor2D\PhysFS\libx86\physfs.exp;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

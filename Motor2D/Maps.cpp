@@ -42,9 +42,9 @@ void Maps::draw()
 		case(MAPTYPE_ORTHOGONAL) :
 	{
 		uint k = 0;
-		for (uint i = 0; i < data.height; i++)
+		for (int i = 0; i < data.height; i++)
 		{
-			for (uint j = 0; j < data.width; j++)
+			for (int j = 0; j < data.width; j++)
 			{
 				rect = tileset->getTileRect(layer->data[k++]);
 				app->render->Blit(tileset->texture, j * tileset->tile_width, i * tileset->tile_height, &rect);
