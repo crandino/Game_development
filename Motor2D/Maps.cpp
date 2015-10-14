@@ -51,6 +51,7 @@ void Maps::draw()
 					app->render->Blit(tileset->texture, j * tileset->tile_width, i * tileset->tile_height, &rect);
 				}
 			}
+			break;
 		}
 
 		case(MAPTYPE_ISOMETRIC) :
@@ -61,9 +62,10 @@ void Maps::draw()
 				for (int j = 0; j < data.width; j++)
 				{
 					rect = tileset->getTileRect(layer->data[k++]);
-					app->render->Blit(tileset->texture, (j-i) * (tileset->tile_width/2), (j+i) * (tileset->tile_height/2) - 160, &rect);
+					app->render->Blit(tileset->texture, (j-i) * (tileset->tile_width * 0.5f), (j+i) * (tileset->tile_height * 0.5f - tileset->offset_y), &rect);
 				}
 			}
+			break;
 		}
 	}
 		
@@ -82,11 +84,21 @@ iPoint Maps::mapToWorld(int x, int y) const
 iPoint Maps::worldToMap(int x, int y) const
 {
 	iPoint ret(0, 0);
-	// TODO 2: Add orthographic world to map coordinates
-	ret.x = x / data.tile_width;
-	ret.y = y / data.tile_height;
 
-	// TODO 3: Add the case for isometric maps to WorldToMap
+	switch (data.type)
+	{
+	case(MAPTYPE_ORTHOGONAL) :
+		// TODO 2: Add orthographic world to map coordinates
+		ret.x = x / data.tile_width;
+		ret.y = y / data.tile_height;
+		break;
+	case(MAPTYPE_ISOMETRIC) :
+		// TODO 3: Add the case for isometric maps to WorldToMap
+		ret.x = ((x / data.tile_width * 0.5f) + (y / data.tile_height * 0.5f )) / 2;
+		ret.y = ((y / data.tile_height * 0.5f) - (x / data.tile_width * 0.5f)) / 2;
+		break;
+	}
+
 	return ret;
 }
 

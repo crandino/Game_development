@@ -32,6 +32,8 @@ bool Scene::start()
 {
 	//app->map->load("far_west.tmx");
 	app->map->load("iso.tmx");
+	app->audio->playMusic("audio/music/billie_jean.ogg");
+	//app->audio->playMusic("audio/music/music_sadpiano.ogg");
 	return true;
 }
 
@@ -61,6 +63,12 @@ bool Scene::update(float dt)
 
 	if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		app->render->camera.x += 1;
+
+	if (app->input->getKey(SDL_SCANCODE_KP_PLUS) == KEY_UP)
+		app->audio->volumeUp();
+
+	if (app->input->getKey(SDL_SCANCODE_KP_MINUS) == KEY_UP)
+		app->audio->volumeDown();
 	
 	app->map->draw();
 
