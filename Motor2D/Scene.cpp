@@ -30,8 +30,8 @@ bool Scene::awake(pugi::xml_node &node)
 // Called before the first frame
 bool Scene::start()
 {
-	//app->map->load("far_west.tmx");
-	app->map->load("iso.tmx");
+	app->map->load("far_west.tmx");
+	//app->map->load("iso.tmx");
 	app->audio->playMusic("audio/music/billie_jean.ogg");
 	//app->audio->playMusic("audio/music/music_sadpiano.ogg");
 	return true;

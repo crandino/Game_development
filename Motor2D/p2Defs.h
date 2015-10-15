@@ -11,24 +11,23 @@
 #define NULL  0
 
 // Deletes a buffer
-#define RELEASE( x ) \
-    {                        \
-    if( x != NULL )        \
-	    {                      \
-      delete x;            \
-	  x = NULL;              \
-	    }                      \
+#define RELEASE( x )		\
+    {                       \
+    if( x != NULL )         \
+	    {                   \
+      delete x;             \
+	  x = NULL;             \
+	    }                   \
     }
 
 // Deletes an array of buffers
-#define RELEASE_ARRAY( x ) \
-    {                              \
-    if( x != NULL )              \
-	    {                            \
-      delete[] x;                \
-	  x = NULL;                    \
-	    }                            \
-                              \
+#define RELEASE_ARRAY( x )  \
+    {                       \
+    if( x != NULL )         \
+	    {                   \
+      delete[] x;           \
+	  x = NULL;             \
+	    }                   \
     }
 
 #define IN_RANGE( value, min, max ) ( ((value) >= (min) && (value) <= (max)) ? 1 : 0 )
@@ -60,7 +59,6 @@ inline const char* const PATH(const char* folder, const char* file)
 }
 
 // Conf
-// TODO 2: move all those defines to data from the config.xml file
 #define ORGANIZATION "My Awesome Studio"
 #define APPNAME "My cool game"
 

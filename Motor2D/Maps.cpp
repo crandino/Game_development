@@ -33,69 +33,72 @@ void Maps::draw()
 	if (map_loaded == false)
 		return;
 
-	// TODO 5(old): Prepare the loop to draw all tilesets + Blit
-	MapLayer* layer = data.layers.getFirst()->data; // for now we just use the first layer and tileset
-	TileSet* tileset = data.tilesets.getFirst()->data;
-	SDL_Rect rect;
+	MapLayer* layer = data.layers.getFirst()->data; 
+	TileSet *tileset = data.tilesets.getFirst()->data;
+	SDL_Rect r;
 
-	switch (data.type)
+	for (int y = 0; y < data.height; y++)
 	{
-		case(MAPTYPE_ORTHOGONAL) :
+		for (int x = 0; x < data.width; x++)
 		{
-			uint k = 0;
-			for (int i = 0; i < data.height; i++)
+			int tile_id = layer->get(x, y);
+			if (tile_id > 0)
 			{
-				for (int j = 0; j < data.width; j++)
-				{
-					rect = tileset->getTileRect(layer->data[k++]);
-					app->render->Blit(tileset->texture, j * tileset->tile_width, i * tileset->tile_height, &rect);
-				}
-			}
-			break;
-		}
+				r = tileset->getTileRect(tile_id);
+				iPoint pos = mapToWorld(x, y);
 
-		case(MAPTYPE_ISOMETRIC) :
-		{
-			uint k = 0;
-			for (int i = 0; i < data.height; i++)
-			{
-				for (int j = 0; j < data.width; j++)
-				{
-					rect = tileset->getTileRect(layer->data[k++]);
-					app->render->Blit(tileset->texture, (j-i) * (tileset->tile_width * 0.5f), (j+i) * (tileset->tile_height * 0.5f - tileset->offset_y), &rect);
-				}
+				app->render->Blit(tileset->texture, pos.x, pos.y, &r);
 			}
-			break;
 		}
-	}
-		
-	// TODO 10(old): Complete the draw function
+	}	
 }
 
 iPoint Maps::mapToWorld(int x, int y) const
 {
-	iPoint ret(0, 0);
-	// TODO 8(old): Create a method that translates x,y coordinates from map positions to world positions
+	iPoint ret;
 
-	// TODO 1: Add isometric map to world coordinates
+	switch (data.type)
+	{
+		case MAPTYPE_ORTHOGONAL :
+			ret.x = x * data.tile_width;
+			ret.y = y * data.tile_height;
+			break;
+		case MAPTYPE_ISOMETRIC :
+			ret.x = (x - y) * (data.tile_width * 0.5f);
+			ret.y = (x + y) * (data.tile_height * 0.5f);
+			break;
+		default :
+			LOG("Unkown map type");
+			ret.x = x;
+			ret.y = y;
+			break;
+	}		
+	
 	return ret;
 }
 
 iPoint Maps::worldToMap(int x, int y) const
 {
-	iPoint ret(0, 0);
+	iPoint ret;
 
 	switch (data.type)
 	{
-	case(MAPTYPE_ORTHOGONAL) :
-		// TODO 2: Add orthographic world to map coordinates
+	case MAPTYPE_ORTHOGONAL:
 		ret.x = x / data.tile_width;
 		ret.y = y / data.tile_height;
 		break;
-	case(MAPTYPE_ISOMETRIC) :
-		// TODO 3: Add the case for isometric maps to WorldToMap
-		ret.x = ((x / data.tile_width * 0.5f) + (y / data.tile_height * 0.5f )) / 2;
-		ret.y = ((y / data.tile_height * 0.5f) - (x / data.tile_width * 0.5f)) / 2;
+	case MAPTYPE_ISOMETRIC:
+	{
+		float half_width = data.tile_width * 0.5f;
+		float half_height = data.tile_height * 0.5f;
+		ret.x = int((x / half_width + y / half_height) / 2);
+		ret.y = int((y / half_height - (x / half_width)) / 2);
+		break;
+	}
+	default:
+		LOG("Unknown map type");
+		ret.x = x; 
+		ret.y = y;
 		break;
 	}
 
@@ -104,18 +107,20 @@ iPoint Maps::worldToMap(int x, int y) const
 
 SDL_Rect TileSet::getTileRect(int id) const
 {
-	SDL_Rect rect = { 0, 0, 0, 0 };
-	// TODO 7(old): Create a method that receives a tile id and returns it's Rect
-	// CRZ al ataque!
-
-	rect.w = tile_width;
+	/*rect.w = tile_width;
 	rect.h = tile_height;
 
 	int index_X = (id - 1) % num_tiles_width;
 	rect.x = index_X * tile_width + index_X * spacing + margin;
 	int index_Y = (id - 1) / num_tiles_width;
-	rect.y = index_Y * tile_height + index_Y * spacing + margin;
+	rect.y = index_Y * tile_height + index_Y * spacing + margin;*/
 
+	int relative_id = id - firstgid;
+	SDL_Rect rect;
+	rect.w = tile_width;
+	rect.h = tile_height;
+	rect.x = margin + ((rect.w + spacing) * (relative_id % num_tiles_width));
+	rect.y = margin + ((rect.h + spacing) * (relative_id / num_tiles_width));
 	return rect;
 }
 
