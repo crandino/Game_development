@@ -36,6 +36,10 @@ public:
 	void volumeUp();
 	void volumeDown();
 
+	// Load / save modules
+	bool load(pugi::xml_node&);
+	bool save(pugi::xml_node&) const;
+	 
 private:
 
 	_Mix_Music*			music;

@@ -18,6 +18,9 @@ public:
 	Module() : active(false)
 	{}
 
+	virtual ~Module()
+	{}
+
 	void init()
 	{
 		active = true;

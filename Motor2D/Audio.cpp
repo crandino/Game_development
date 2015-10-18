@@ -185,3 +185,21 @@ void Audio::volumeDown()
 {
 	Mix_VolumeMusic(Mix_VolumeMusic(-1) - 8);
 }
+
+bool Audio::load(pugi::xml_node& node)
+{
+	pugi::xml_node volume = node.child("volume");
+
+	Mix_VolumeMusic(volume.attribute("level").as_int());
+
+	return true;
+}
+
+bool Audio::save(pugi::xml_node& node) const
+{
+	pugi::xml_node volume = node.append_child("volume");
+
+	volume.append_attribute("level") = Mix_VolumeMusic(-1);
+
+	return true;
+}

@@ -17,7 +17,9 @@ public:
 	bool awake(pugi::xml_node &node);
 	bool cleanUp();
 
-	bool addPath(const char *path_or_zip, const char *mount_point = NULL);
+	bool addSearchPath(const char *path_or_zip, const char *mount_point = NULL);
+	bool removeAllSearchPaths();
+	bool removePath(const char *path_or_zip);
 	uint load(const char* file, char **buffer) const;
 	SDL_RWops *load(const char* file) const;
 	uint save(const char *file, const char *buffer, uint size) const;

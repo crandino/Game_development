@@ -121,7 +121,7 @@ bool Render::save(pugi::xml_node &node) const
 }
 
 // Blit to screen
-bool Render::Blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivot_x, int pivot_y) const
+bool Render::blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivot_x, int pivot_y) const
 {
 	bool ret = true;
 	uint scale = app->win->getScale();

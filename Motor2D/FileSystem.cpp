@@ -9,16 +9,21 @@ FileSystem::FileSystem()
 
 	// PHYSFS must be initialized before other modules awake,
 	// because it will be used by them.
-	char *base_path = SDL_GetBasePath();
-	PHYSFS_init(base_path);
-	SDL_free(base_path);
+	if (PHYSFS_isInit() == 0)
+	{
+		char *base_path = SDL_GetBasePath();
+		PHYSFS_init(base_path);
+		SDL_free(base_path);
 
-	addPath(".");
+		addSearchPath(".");
+	}
+	
 }
 
 FileSystem::~FileSystem()
 {
-	PHYSFS_deinit();
+	if (PHYSFS_isInit() != 0)
+		PHYSFS_deinit();
 }
 
 bool FileSystem::awake(pugi::xml_node &node)
@@ -26,7 +31,7 @@ bool FileSystem::awake(pugi::xml_node &node)
 	bool ret = true;
 
 	for (pugi::xml_node path = node.child("path"); path ; path = path.next_sibling("path"))
-		addPath(path.child_value());
+		addSearchPath(path.child_value());
 
 	char *write_dir = SDL_GetPrefPath("Carlos", "Game_development");
 
@@ -38,7 +43,7 @@ bool FileSystem::awake(pugi::xml_node &node)
 	else
 	{
 		LOG("%s %s", "Write directory is ", write_dir);
-		addPath(write_dir, getSaveDirectory());
+		addSearchPath(write_dir, getSaveDirectory());
 	}
 
 	SDL_free(write_dir);
@@ -48,16 +53,49 @@ bool FileSystem::awake(pugi::xml_node &node)
 
 bool FileSystem::cleanUp()
 {
+	removeAllSearchPaths();
 	return true;
 }
 
-bool FileSystem::addPath(const char *path_or_zip, const char *mount_point)
+bool FileSystem::addSearchPath(const char *path_or_zip, const char *mount_point)
 {
 	bool ret = true;
 
 	if (PHYSFS_mount(path_or_zip, mount_point, 1) == 0)
 	{
 		LOG("%s %s", "Failure on mounting or adding path", path_or_zip);
+		LOG("%s", "Error:", PHYSFS_getLastError());
+		ret = false;
+	}
+
+	return ret;
+}
+
+bool FileSystem::removeAllSearchPaths()
+{
+	bool ret = false;
+
+	char **paths;
+	for (paths = PHYSFS_getSearchPath(); *paths != NULL; paths++)
+	{
+		PHYSFS_removeFromSearchPath(*paths);
+	}
+
+	if (*(paths = PHYSFS_getSearchPath()) == NULL)
+		ret = true;
+
+	PHYSFS_freeList(paths);
+
+	return ret;
+}
+
+bool FileSystem::removePath(const char *path_or_zip)
+{
+	bool ret = true;
+		
+	if (PHYSFS_removeFromSearchPath(path_or_zip) == 0)
+	{
+		LOG("%s %s", "Failure on removing directory or file on search path", path_or_zip);
 		LOG("%s", "Error:", PHYSFS_getLastError());
 		ret = false;
 	}

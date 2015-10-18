@@ -60,7 +60,7 @@ bool Textures::cleanUp()
 }
 
 // Load new texture from file path
-SDL_Texture* const Textures::Load(const char* path)
+SDL_Texture* const Textures::loadTexture(const char* path)
 {
 	SDL_Texture* texture = NULL;
 	SDL_Surface* surface = IMG_Load_RW(app->fs->load(path), 1);
@@ -79,7 +79,7 @@ SDL_Texture* const Textures::Load(const char* path)
 }
 
 // Unload texture
-bool Textures::UnLoad(SDL_Texture* texture)
+bool Textures::unloadTexture(SDL_Texture* texture)
 {
 	doubleNode<SDL_Texture*>* item;
 

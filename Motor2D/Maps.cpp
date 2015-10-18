@@ -33,24 +33,31 @@ void Maps::draw()
 	if (map_loaded == false)
 		return;
 
-	MapLayer* layer = data.layers.getFirst()->data; 
+	doubleNode<MapLayer*> *layer = data.layers.getFirst();
 	TileSet *tileset = data.tilesets.getFirst()->data;
-	SDL_Rect r;
+	SDL_Rect rect;
 
-	for (int y = 0; y < data.height; y++)
+	for (; layer != NULL ; layer = layer->next)
 	{
-		for (int x = 0; x < data.width; x++)
+		MapLayer *layer_data = layer->data;
+		if (layer_data->visible == true)
 		{
-			int tile_id = layer->get(x, y);
-			if (tile_id > 0)
+			for (int y = 0; y < data.height; y++)
 			{
-				r = tileset->getTileRect(tile_id);
-				iPoint pos = mapToWorld(x, y);
+				for (int x = 0; x < data.width; x++)
+				{
+					int tile_id = layer_data->get(x, y);
+					if (tile_id > 0)
+					{
+						rect = tileset->getTileRect(tile_id);
+						iPoint pos = mapToWorld(x, y);
 
-				app->render->Blit(tileset->texture, pos.x, pos.y, &r);
+						app->render->blit(tileset->texture, pos.x, pos.y, &rect);
+					}
+				}
 			}
 		}
-	}	
+	}
 }
 
 iPoint Maps::mapToWorld(int x, int y) const
@@ -228,6 +235,7 @@ bool Maps::load(const char *file_name)
 			LOG("Layer ----");
 			LOG("name: %s", l->name.GetString());
 			LOG("tile width: %d tile height: %d", l->width, l->height);
+			LOG("Visible: %s", l->visible == 0 ? "false" : "true");
 			item_layer = item_layer->next;
 		}
 	}
@@ -334,7 +342,7 @@ bool Maps::loadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 	}
 	else
 	{
-		set->texture = app->tex->Load(PATH(folder.GetString(), image.attribute("source").as_string()));
+		set->texture = app->tex->loadTexture(PATH(folder.GetString(), image.attribute("source").as_string()));
 		int w, h;
 		SDL_QueryTexture(set->texture, NULL, NULL, &w, &h);
 		set->tex_width = image.attribute("width").as_int();
@@ -365,6 +373,12 @@ bool Maps::loadLayer(pugi::xml_node& node, MapLayer* layer)
 	layer->name = node.attribute("name").as_string();
 	layer->width = node.attribute("width").as_int();
 	layer->height = node.attribute("height").as_int();
+
+	if (node.attribute("visible") != NULL)
+		layer->visible = node.attribute("visible").as_bool();
+	else
+		layer->visible = true;
+
 	pugi::xml_node layer_data = node.child("data");
 
 	if (layer_data == NULL)
