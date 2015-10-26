@@ -33,14 +33,14 @@ void Maps::draw()
 	if (map_loaded == false)
 		return;
 
-	doubleNode<MapLayer*> *layer = data.layers.getFirst();
-	TileSet *tileset = data.tilesets.getFirst()->data;
+	doubleNode<MapLayer*> *layer_item = data.layers.getFirst();
+	TileSet *tileset;
 	SDL_Rect rect;
 
-	for (; layer != NULL ; layer = layer->next)
+	for (; layer_item != NULL ; layer_item = layer_item->next)
 	{
-		MapLayer *layer_data = layer->data;
-		if (layer_data->visible == true)
+		MapLayer *layer_data = layer_item->data;
+		if (layer_item->data->properties.getValueByName("Draw") != 0)
 		{
 			for (int y = 0; y < data.height; y++)
 			{
@@ -49,15 +49,38 @@ void Maps::draw()
 					int tile_id = layer_data->get(x, y);
 					if (tile_id > 0)
 					{
-						rect = tileset->getTileRect(tile_id);
-						iPoint pos = mapToWorld(x, y);
+						tileset = getTilesetFromTileId(tile_id);
 
-						app->render->blit(tileset->texture, pos.x, pos.y, &rect);
+						if (tileset != NULL)
+						{
+							rect = tileset->getTileRect(tile_id);
+							iPoint pos = mapToWorld(x, y);
+
+							app->render->blit(tileset->texture, pos.x, pos.y, &rect);
+						}
 					}
 				}
 			}
 		}
 	}
+}
+
+TileSet* Maps::getTilesetFromTileId(int id) const
+{
+	// Pick the right Tileset based on a tile id
+
+	doubleNode<TileSet*> *set_item = data.tilesets.getFirst();
+	TileSet *tileset = NULL;
+
+	while (set_item != NULL)
+	{
+		if (id >= set_item->data->firstgid)
+			tileset = set_item->data;
+		set_item = set_item->next;
+	}
+
+	return tileset;
+
 }
 
 iPoint Maps::mapToWorld(int x, int y) const
@@ -185,7 +208,7 @@ bool Maps::load(const char *file_name)
 
 	// Load all tilesets info
 	pugi::xml_node tileset;
-	for (tileset = map_file.child("map").child("tileset"); tileset && ret; tileset = tileset.next_sibling("tilset"))
+	for (tileset = map_file.child("map").child("tileset"); tileset && ret; tileset = tileset.next_sibling("tileset"))
 	{
 		TileSet *set = new TileSet();
 
@@ -235,7 +258,6 @@ bool Maps::load(const char *file_name)
 			LOG("Layer ----");
 			LOG("name: %s", l->name.GetString());
 			LOG("tile width: %d tile height: %d", l->width, l->height);
-			LOG("Visible: %s", l->visible == 0 ? "false" : "true");
 			item_layer = item_layer->next;
 		}
 	}
@@ -373,11 +395,7 @@ bool Maps::loadLayer(pugi::xml_node& node, MapLayer* layer)
 	layer->name = node.attribute("name").as_string();
 	layer->width = node.attribute("width").as_int();
 	layer->height = node.attribute("height").as_int();
-
-	if (node.attribute("visible") != NULL)
-		layer->visible = node.attribute("visible").as_bool();
-	else
-		layer->visible = true;
+	loadProperties(node, layer->properties);
 
 	pugi::xml_node layer_data = node.child("data");
 
@@ -399,5 +417,31 @@ bool Maps::loadLayer(pugi::xml_node& node, MapLayer* layer)
 		}
 	}
 
+	return ret;
+}
+
+bool Maps::loadProperties(pugi::xml_node& node, Properties& properties)
+{
+	bool ret =  false;
+
+	pugi::xml_node prop = node.child("properties").first_child();
+
+	if (prop != NULL)
+	{
+		while (prop != NULL)
+		{
+			properties.names.pushBack(prop.attribute("name").as_string());
+			properties.values.pushBack(prop.attribute("value").as_int());
+			prop = prop.next_sibling();
+		}
+		ret = true;
+	}
+	else
+	{
+		LOG("Layer properties cannot be loaded for %s layer", node.attribute("name").as_string());
+		properties.names.pushBack("Error");
+		properties.values.pushBack(-1);
+	}
+	
 	return ret;
 }

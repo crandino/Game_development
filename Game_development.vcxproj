@@ -112,6 +112,7 @@
   <ItemGroup>
     <None Include="Game\maps\far_west.tmx" />
     <None Include="Game\maps\iso.tmx" />
+    <None Include="Game\maps\navigation_map.tmx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

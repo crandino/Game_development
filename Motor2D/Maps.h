@@ -3,8 +3,26 @@
 
 #include "Module.h"
 #include "DList.h"
+#include "DynArray.h"
 #include "Point2d.h"
 #include "SDL\include\SDL.h"
+
+struct Properties
+{
+	DynArray<p2SString>		names;
+	DynArray<int>			values;
+
+
+	int getValueByName(const char *name_property) const
+	{
+		for (uint i = 0; i < names.getNumElements(); i++)
+		{
+			if (strcmp(names[i].GetString(), name_property) == 0)
+				return values[i];
+		}
+		return -1;
+	}
+};
 
 enum MapTypes
 {
@@ -38,8 +56,8 @@ struct MapLayer
 	p2SString		name;
 	int				width;
 	int				height;
-	bool			visible;
 	uint			*data;
+	Properties		properties;
 
 	MapLayer() : data(NULL) {}
 	~MapLayer() { RELEASE(data); }
@@ -74,6 +92,9 @@ private:
 	bool loadTilesetDetails(pugi::xml_node &tileset_node, TileSet *set);
 	bool loadTilesetImage(pugi::xml_node &tileset_node, TileSet *set);
 	bool loadLayer(pugi::xml_node &node, MapLayer *layer);
+	bool loadProperties(pugi::xml_node& node, Properties& properties);
+
+	TileSet* getTilesetFromTileId(int id) const;
 	
 public:
 
