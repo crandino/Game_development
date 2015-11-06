@@ -3,6 +3,8 @@
 
 #include "DList.h"
 #include "Module.h"
+#include "Timer.h"
+#include "PerfTimer.h"
 #include "PugiXml\src\pugixml.hpp"
 
 // Modules
@@ -13,6 +15,7 @@ class Textures;
 class Audio;
 class FileSystem;
 class Maps;
+class PathFinding;
 class Scene;
 
 class App
@@ -72,8 +75,6 @@ private:
 
 public:
 
-	uint				frames;
-	float				dt;
 	pugi::xml_document	config_file;
 	pugi::xml_node		config;
 
@@ -85,6 +86,7 @@ public:
 	Audio*				audio;
 	Scene*				scene;
 	Maps*				map;
+	PathFinding*		path;
 	FileSystem*			fs;
 
 private:
@@ -97,6 +99,18 @@ private:
 	mutable bool		want_to_save;
 	p2SString			load_game;
 	mutable p2SString	save_game;
+
+	Timer					timer;
+	PerfTimer		   perf_timer;
+
+	float				  avg_fps;
+	float   seconds_since_startup;
+	float					   dt;
+	uint32			last_frame_ms;
+	uint32	frames_on_last_update;
+	uint64			  frame_count;
+	float				last_time;
+	uint32			  last_frames;
 };
 
 extern App *app;

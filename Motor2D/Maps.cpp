@@ -68,7 +68,6 @@ void Maps::draw()
 TileSet* Maps::getTilesetFromTileId(int id) const
 {
 	// Pick the right Tileset based on a tile id
-
 	doubleNode<TileSet*> *set_item = data.tilesets.getFirst();
 	TileSet *tileset = NULL;
 
@@ -81,6 +80,37 @@ TileSet* Maps::getTilesetFromTileId(int id) const
 
 	return tileset;
 
+}
+
+bool Maps::createWalkabilityMap(int &width, int &height, uchar *buffer)
+{
+	doubleNode<MapLayer*> *item_layer = data.layers.getFirst();
+	bool ret = false;
+
+	for(; item_layer != NULL; item_layer = item_layer->next)
+	{
+		MapLayer *layer = item_layer->data;
+
+		if (layer->properties.getValueByName("Navigation") == 0)
+			continue;
+
+		buffer = new uchar[layer->width * layer->height];
+		
+		for (uint i = 0; i < layer->width * layer->height; i++)
+		{			
+			TileSet *tile_set = getTilesetFromTileId(layer->data[i]);
+			if (tile_set != NULL)
+			{
+				buffer[i] = (layer->data[i] == 26) ? 0 : 1;
+			}			
+		}
+
+		width = layer->width;
+		height = layer->height;
+		ret = true;
+		break;
+	}
+	return ret;
 }
 
 iPoint Maps::mapToWorld(int x, int y) const
@@ -431,7 +461,7 @@ bool Maps::loadProperties(pugi::xml_node& node, Properties& properties)
 		while (prop != NULL)
 		{
 			properties.names.pushBack(prop.attribute("name").as_string());
-			properties.values.pushBack(prop.attribute("value").as_int());
+			properties.values.pushBack(prop.attribute("value").as_int(0));
 			prop = prop.next_sibling();
 		}
 		ret = true;
@@ -439,8 +469,6 @@ bool Maps::loadProperties(pugi::xml_node& node, Properties& properties)
 	else
 	{
 		LOG("Layer properties cannot be loaded for %s layer", node.attribute("name").as_string());
-		properties.names.pushBack("Error");
-		properties.values.pushBack(-1);
 	}
 	
 	return ret;

@@ -24,7 +24,7 @@ public:
 	bool preUpdate();
 
 	// Called each loop iteration
-	bool update(float dt);
+	bool update();
 
 	// Called before all updates
 	bool postUpdate();
@@ -33,6 +33,10 @@ public:
 	bool cleanUp();
 
 private:
+
+	float player_x;
+	float player_y;
+	SDL_Texture* debug_tex;
 
 };
 

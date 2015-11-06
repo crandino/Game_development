@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "Maps.h"
 #include "FileSystem.h"
+#include "PathFinding.h"
 #include "App.h"
 
 #include <iostream> 
@@ -17,7 +18,6 @@
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
-	frames = 0;
 	want_to_save = want_to_load = false;
 
 	input = new Input();
@@ -27,6 +27,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	audio = new Audio();
 	scene = new Scene();
 	map = new Maps();
+	path = new PathFinding();
 	fs = new FileSystem();
 
 	// Ordered for awake / start / update
@@ -37,6 +38,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	addModule(tex);
 	addModule(audio);
 	addModule(map);
+	addModule(path);
 	addModule(scene);
 
 	// render last to swap buffer
@@ -106,6 +108,16 @@ bool App::awake()
 // Called before the first frame
 bool App::start()
 {
+	avg_fps = 0.0f;
+	seconds_since_startup = 0.0f;
+	dt = 0.0f;
+	last_frame_ms = 0;
+	frames_on_last_update = 0;
+	frame_count = 0;
+
+	last_time = 0.0f;
+	last_frames = 0;
+
 	bool ret = true;
 	doubleNode<Module*>* item;
 	item = modules.getFirst();
@@ -144,6 +156,9 @@ bool App::update()
 // ---------------------------------------------
 void App::prepareUpdate()
 {
+	// Starting timers
+	timer.start();
+	perf_timer.start();
 }
 
 // ---------------------------------------------
@@ -151,6 +166,28 @@ void App::finishUpdate()
 {
 	if (want_to_load == true) loadGameNow();
 	if (want_to_save == true) saveGameNow();
+
+	// Amount of frames since startup
+	frame_count++;
+	// Amount of time since game start (use a low resolution timer)
+	seconds_since_startup += timer.readSec();
+	// Average FPS for the whole game life
+	avg_fps = frame_count / seconds_since_startup;
+	// Amount of ms took the last update
+	dt = timer.readSec();
+	// Amount of frames during the last second
+	if (seconds_since_startup - last_time > 1.0f)
+	{
+		frames_on_last_update = (frame_count - last_frames) / (seconds_since_startup - last_time);
+		last_time = seconds_since_startup;
+		last_frames = frame_count;
+	}
+
+	static char title[256];
+	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
+		avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
+
+	app->win->setTitle(title);
 }
 
 // Call modules before each loop iteration
@@ -191,7 +228,7 @@ bool App::doUpdate()
 			continue;
 		}
 
-		ret = item->data->update(dt);
+		ret = item->data->update();
 	}
 
 	return ret;

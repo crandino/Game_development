@@ -4,7 +4,7 @@
 #include "Window.h"
 #include "Render.h"
 
-#define VSYNC true
+#define VSYNC false
 
 Render::Render() : Module()
 {
@@ -66,7 +66,7 @@ bool Render::preUpdate()
 	return true;
 }
 
-bool Render::update(float dt)
+bool Render::update()
 {
 	return true;
 }

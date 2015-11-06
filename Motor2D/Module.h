@@ -45,7 +45,7 @@ public:
 	}
 
 	// Called each loop iteration
-	virtual bool update(float dt)
+	virtual bool update()
 	{
 		return true;
 	}

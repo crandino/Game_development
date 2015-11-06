@@ -36,6 +36,9 @@
   <image source="meta.png" width="128" height="64"/>
  </tileset>
  <layer name="Ground" width="25" height="25">
+   <properties>
+     <property name="Draw" value="1"/>
+   </properties>
   <data>
    <tile gid="24"/>
    <tile gid="24"/>

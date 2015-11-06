@@ -20,7 +20,7 @@ struct Properties
 			if (strcmp(names[i].GetString(), name_property) == 0)
 				return values[i];
 		}
-		return -1;
+		return 0;
 	}
 };
 
@@ -111,6 +111,8 @@ public:
 
 	iPoint mapToWorld(int x, int y) const;
 	iPoint worldToMap(int x, int y) const;
+
+	bool createWalkabilityMap(int &width, int &height, uchar *buffer);
 	
 };
 

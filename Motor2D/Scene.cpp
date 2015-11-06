@@ -33,8 +33,15 @@ bool Scene::start()
 	//app->map->load("far_west.tmx");
 	//app->map->load("iso.tmx");
 	app->map->load("navigation_map.tmx");
-	app->audio->playMusic("audio/music/billie_jean.ogg");
+	uchar *buffer = NULL;
+	app->map->createWalkabilityMap(app->map->data.width, app->map->data.height, buffer);
+
+	//app->audio->playMusic("audio/music/billie_jean.ogg");
 	//app->audio->playMusic("audio/music/music_sadpiano.ogg");
+
+	debug_tex = app->tex->loadTexture("textures/path.png");
+	player_x = player_y = 10;
+
 	return true;
 }
 
@@ -45,25 +52,45 @@ bool Scene::preUpdate()
 }
 
 // Called each loop iteration
-bool Scene::update(float dt)
+bool Scene::update()
 {
 	if (app->input->getKey(SDL_SCANCODE_L) == KEY_DOWN)
 		app->loadGame("save_game.xml");
 
-	if (app->input->getKey(SDL_SCANCODE_S) == KEY_DOWN)
+	if (app->input->getKey(SDL_SCANCODE_K) == KEY_DOWN)
 		app->saveGame("save_game.xml");
 
 	if (app->input->getKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y -= 1;
+		app->render->camera.y -= 2;
 
 	if (app->input->getKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y += 1;
+		app->render->camera.y += 2;
 
 	if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x -= 1;
+		app->render->camera.x -= 2;
 
 	if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x += 1;
+		app->render->camera.x += 2;
+
+	if (app->input->getKey(SDL_SCANCODE_W) == KEY_DOWN)
+	{
+		player_x--; player_y--;
+	}	
+
+	if (app->input->getKey(SDL_SCANCODE_S) == KEY_DOWN)
+	{
+		player_x++; player_y++;
+	}
+
+	if (app->input->getKey(SDL_SCANCODE_D) == KEY_DOWN)
+	{
+		player_x++; player_y--;
+	}
+
+	if (app->input->getKey(SDL_SCANCODE_A) == KEY_DOWN)
+	{
+		player_x--; player_y++;
+	}
 
 	if (app->input->getKey(SDL_SCANCODE_KP_PLUS) == KEY_UP)
 		app->audio->volumeUp();
@@ -73,6 +100,10 @@ bool Scene::update(float dt)
 	
 	app->map->draw();
 
+	iPoint pos;
+	pos = app->map->mapToWorld(player_x, player_y);
+	app->render->blit(debug_tex, pos.x, pos.y);
+	
 	int x, y;
 	app->input->getMousePosition(x, y);
 	iPoint map_coordinates = app->map->worldToMap(x - app->render->camera.x, y - app->render->camera.y);
@@ -82,7 +113,7 @@ bool Scene::update(float dt)
 		app->map->data.tilesets.count(),
 		map_coordinates.x, map_coordinates.y);
 
-	app->win->setTitle(title.GetString());
+	//app->win->setTitle(title.GetString());
 
 	return true;
 }
