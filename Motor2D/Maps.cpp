@@ -82,7 +82,7 @@ TileSet* Maps::getTilesetFromTileId(int id) const
 
 }
 
-bool Maps::createWalkabilityMap(int &width, int &height, uchar *buffer)
+bool Maps::createWalkabilityMap(int &width, int &height, uchar **buffer)
 {
 	doubleNode<MapLayer*> *item_layer = data.layers.getFirst();
 	bool ret = false;
@@ -94,17 +94,19 @@ bool Maps::createWalkabilityMap(int &width, int &height, uchar *buffer)
 		if (layer->properties.getValueByName("Navigation") == 0)
 			continue;
 
-		buffer = new uchar[layer->width * layer->height];
+		uchar *map = new uchar[layer->width * layer->height];
+		memset(map, 1, layer->width * layer->height);
 		
 		for (uint i = 0; i < layer->width * layer->height; i++)
 		{			
 			TileSet *tile_set = getTilesetFromTileId(layer->data[i]);
 			if (tile_set != NULL)
 			{
-				buffer[i] = (layer->data[i] == 26) ? 0 : 1;
+				map[i] = (layer->data[i] - tile_set->firstgid > 0 ) ? 0 : 1;
 			}			
 		}
 
+		*buffer = map;
 		width = layer->width;
 		height = layer->height;
 		ret = true;

@@ -11,8 +11,7 @@ struct Properties
 {
 	DynArray<p2SString>		names;
 	DynArray<int>			values;
-
-
+	
 	int getValueByName(const char *name_property) const
 	{
 		for (uint i = 0; i < names.getNumElements(); i++)
@@ -112,7 +111,7 @@ public:
 	iPoint mapToWorld(int x, int y) const;
 	iPoint worldToMap(int x, int y) const;
 
-	bool createWalkabilityMap(int &width, int &height, uchar *buffer);
+	bool createWalkabilityMap(int &width, int &height, uchar **buffer);
 	
 };
 

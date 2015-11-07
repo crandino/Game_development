@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Textures.h"
 #include "Audio.h"
+#include "PathFinding.h"
 #include "Render.h"
 #include "Window.h"
 #include "Scene.h"
@@ -34,10 +35,9 @@ bool Scene::start()
 	//app->map->load("iso.tmx");
 	app->map->load("navigation_map.tmx");
 	uchar *buffer = NULL;
-	app->map->createWalkabilityMap(app->map->data.width, app->map->data.height, buffer);
-
-	//app->audio->playMusic("audio/music/billie_jean.ogg");
-	//app->audio->playMusic("audio/music/music_sadpiano.ogg");
+	int width, height;
+	if (app->map->createWalkabilityMap(width, height, &buffer))
+		app->path->setMap(width, height, buffer);
 
 	debug_tex = app->tex->loadTexture("textures/path.png");
 	player_x = player_y = 10;
