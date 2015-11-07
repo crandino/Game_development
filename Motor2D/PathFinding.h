@@ -6,11 +6,40 @@
 #include "DynArray.h"
 #include "Point2d.h"
 
+struct pathList;
+
 struct pathNode
 {
 	int x, y;    // Tile info
-	int f, g, h; // Score, cost, estimation ("Manhattan distance")
+	int g, h;    // Score, cost
 	pathNode *parent;
+
+	pathNode();
+	pathNode(int score_g, int score_h, int posx, int posy, const pathNode *parent_node);
+	pathNode(const pathNode& node);
+
+	// FindWalkableAdjacents: Fills a list of adjacent tiles that are walkable
+	uint findWalkableAdjacents(pathList& list_to_fill) const;
+	
+	// Score: Basically returns g + h
+	int score() const;
+	
+	// CalculateF : Recalculates F based on distance to destination
+	// Estimation("Manhattan distance")
+	int calculateF(const iPoint& destination);
+};
+
+struct pathList
+{
+	//It contains a linked list of PathNode(not PathNode*)
+	DList<pathNode> list;
+
+	//Find: Returns the node item if a certain node is in this list already(or NULL)
+	doubleNode<pathNode> *find(const iPoint& point) const;
+
+	//GetNodeLowestScore: Returns the Pathnode with lowest score in this list
+	//or NULL if empty
+	doubleNode<pathNode> *getNodeLowestScore() const;
 };
 
 class PathFinding : public Module
@@ -18,8 +47,8 @@ class PathFinding : public Module
 
 private:
 
-	DList<pathNode>    open_list;
-	DList<pathNode>   close_list;
+	pathList		   open_list;
+	pathList		  close_list;
 
 	DynArray<iPoint>  path_found;
 	uchar*			    map_data;

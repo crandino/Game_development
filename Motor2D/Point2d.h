@@ -25,6 +25,13 @@ public:
 		y = py;
 	}
 
+	Point2d &set(const TYPE &px, const TYPE &py)
+	{
+		x = px;
+		y = py;
+		return (*this);
+	}
+
 	Point2d operator+ (const Point2d &p) const
 	{
 		Point2d tmp;
