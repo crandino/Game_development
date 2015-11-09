@@ -10,12 +10,12 @@ struct pathList;
 
 struct pathNode
 {
-	int x, y;    // Tile info
+	iPoint pos;  // Tile info
 	int g, h;    // Score, cost
-	pathNode *parent;
+	const pathNode *parent;
 
 	pathNode();
-	pathNode(int score_g, int score_h, int posx, int posy, const pathNode *parent_node);
+	pathNode(int score_g, int score_h, iPoint pos, const pathNode *parent_node);
 	pathNode(const pathNode& node);
 
 	// FindWalkableAdjacents: Fills a list of adjacent tiles that are walkable
@@ -37,8 +37,7 @@ struct pathList
 	//Find: Returns the node item if a certain node is in this list already(or NULL)
 	doubleNode<pathNode> *find(const iPoint& point) const;
 
-	//GetNodeLowestScore: Returns the Pathnode with lowest score in this list
-	//or NULL if empty
+	//GetNodeLowestScore: Returns the Pathnode with lowest score in this list or NULL if empty
 	doubleNode<pathNode> *getNodeLowestScore() const;
 };
 
@@ -46,9 +45,6 @@ class PathFinding : public Module
 {
 
 private:
-
-	pathList		   open_list;
-	pathList		  close_list;
 
 	DynArray<iPoint>  path_found;
 	uchar*			    map_data;
@@ -65,8 +61,8 @@ public:
 	// CreatePath: Request to have a path from A to B
 	int createPath(const iPoint& origin, const iPoint& destination);
 
-		// GetLastPath: Returns order path step by step
-	const DynArray<iPoint>* getLastPath() const;
+	// GetLastPath: Returns order path step by step
+	const DynArray<iPoint> *getLastPath() const;
 
 	//Three utility methods :
 
@@ -78,8 +74,6 @@ public:
 
 	//GetTileAt: return the walkability value of a tile
 	uchar getTileAt(const iPoint& pos) const;
-
-	//bool findPath(const iPoint &origin, const iPoint &destination);
 
 	//bool start();
 	//bool awake(pugi::xml_node &conf);

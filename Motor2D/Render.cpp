@@ -86,6 +86,17 @@ bool Render::cleanUp()
 	return true;
 }
 
+iPoint Render::screenToWorld(int x, int y) const
+{
+	iPoint ret;
+	int scale = app->win->getScale();
+
+	ret.x = (x - camera.x / scale);
+	ret.y = (y - camera.y / scale);
+
+	return ret;
+}
+
 void Render::SetBackgroundColor(SDL_Color color)
 {
 	background = color;

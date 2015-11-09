@@ -10,48 +10,54 @@
 
 #define INVALID_WALKABILTY_CODE 255
 
-pathNode::pathNode() : g(-1), h(-1), x(-1), y(-1), parent(NULL) { }
-pathNode::pathNode(int g_score, int h_score, int posx, int posy, const pathNode *parent_node) : g(g_score), h(h_score), x(posx), y(posy), parent(parent) { }
-pathNode::pathNode(const pathNode &node) : g(node.g), h(node.h), x(node.x), y(node.y), parent(node.parent)  { }
+pathNode::pathNode() : g(-1), h(-1), pos(-1, -1), parent(NULL) { }
+pathNode::pathNode(int g_score, int h_score, iPoint position, const pathNode *parent_node) : g(g_score), h(h_score), pos(position), parent(parent_node) { }
+pathNode::pathNode(const pathNode &node) : g(node.g), h(node.h), pos(node.pos), parent(node.parent)  { }
 
 uint pathNode::findWalkableAdjacents(pathList& list_to_fill) const
 {
 	uint items_before = list_to_fill.list.count();
 	iPoint new_pos;
-	uint items_added;
+	uint items_added = 0;
 
-	//Nodes-- > East, South, West, North;
-	new_pos.set(x + 1, y);
+	LOG(" Origin position : %d,%d", pos.x, pos.y);
+	//Nodes-- > North, West, South, East
+	new_pos.set(pos.x, pos.y - 1);
+	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
-		pathNode node_E(-1, -1, new_pos.x, new_pos.y, this);
+		//pathNode node_N(-1, -1, new_pos, this);
 		items_added++;
-		list_to_fill.list.add(node_E);
+		list_to_fill.list.add(pathNode(-1, -1, new_pos, this));
 	}
 
-	new_pos.set(x, y + 1);
+	new_pos.set(pos.x - 1, pos.y);
+	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
-		pathNode node_S(-1, -1, new_pos.x, new_pos.y, this);
+		//pathNode node_W(-1, -1, new_pos, this);
 		items_added++;
-		list_to_fill.list.add(node_S);
+		list_to_fill.list.add(pathNode(-1, -1, new_pos, this));
 	}
 
-	new_pos.set(x - 1, y);
+	new_pos.set(pos.x, pos.y + 1);
+	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
-		pathNode node_W(-1, -1, new_pos.x, new_pos.y, this);
+		//pathNode node_S(-1, -1, new_pos, this);
 		items_added++;
-		list_to_fill.list.add(node_W);
+		list_to_fill.list.add(pathNode(-1, -1, new_pos, this));
 	}
 
-	new_pos.set(x, y - 1);
+	new_pos.set(pos.x + 1, pos.y);
+	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
-		pathNode node_N(-1, -1, new_pos.x, new_pos.y, this);
+		//pathNode node_E(-1, -1, new_pos, this);
 		items_added++;
-		list_to_fill.list.add(node_N);
+		list_to_fill.list.add(pathNode(-1, -1, new_pos, this));
 	}
+	LOG(" ------------------------- ");
 
 	return items_added - items_before;
 }
@@ -64,9 +70,7 @@ int pathNode::score() const
 int pathNode::calculateF(const iPoint& destination)
 {
 	g = parent->g + 1;
-	iPoint pos(x, y);
-	h = pos.distanceTo(destination);
-	//abs((destination.x - x) + (destination.y - y));
+	h = abs(destination.x - pos.x) + abs(destination.y - pos.y); // pos.distanceTo(destination);
 	return g + h;
 }
 
@@ -75,7 +79,7 @@ doubleNode<pathNode> *pathList::find(const iPoint& point) const
 	doubleNode<pathNode> *item = list.getFirst();
 	while (item != NULL)
 	{
-		if (item->data.x == point.x && item->data.y == point.y)
+		if (item->data.pos == point)
 			return item;
 		item = item->next;
 	}
@@ -112,7 +116,9 @@ PathFinding::PathFinding()
 }
 
 PathFinding::~PathFinding()
-{ }
+{ 
+	RELEASE_ARRAY(map_data);
+}
 
 bool PathFinding::setMap(const uint &width, const uint &height, uchar *data)
 {
@@ -129,11 +135,79 @@ bool PathFinding::setMap(const uint &width, const uint &height, uchar *data)
 	return true;
 }
 
-//FindWalkableAdjacents: Fills a list of adjacent tiles that are walkable
-uint pathNode::findWalkableAdjacents(pathList& list_to_fill) const
+int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 {
-	iPoint origin(x, y);
-	
+	// Origin and destination are walkable?
+	if (!isWalkable(origin) || !isWalkable(destination))
+		return -1;
+
+	path_found.clear();
+
+	// Open and close list
+	pathList open_list, close_list;
+
+	pathNode node(0, 0, origin, NULL);
+	open_list.list.add(node);
+	doubleNode<pathNode> *pnode = open_list.list.getFirst();
+
+	while (open_list.list.count() > 0)
+	{
+		close_list.list.add(pnode->data);
+
+		pathList candidate_nodes;
+		int items_added = pnode->data.findWalkableAdjacents(candidate_nodes);
+		doubleNode<pathNode> *item = candidate_nodes.list.getLast();
+
+		for (int i = 0; i < items_added; i++)
+		{
+			if (close_list.find(item->data.pos))
+			{
+				item = item->previous;
+				continue;
+			}
+			else if (open_list.find(item->data.pos))
+			{
+				doubleNode<pathNode> *pnode1 = open_list.find(item->data.pos);
+				if (item->data.calculateF(destination) < pnode1->data.score())
+				{
+					pnode1->data.parent = item->data.parent;
+					pnode1->data.calculateF(destination);
+				}
+			}
+			else
+			{
+				item->data.calculateF(destination);
+				open_list.list.add(item->data);
+			}
+			item = item->previous;
+		}
+
+		open_list.list.del(pnode);
+	/*	item = open_list.list.getFirst();
+		LOG(" ------------------------ ");
+		while (item != NULL)
+		{
+			LOG("Tile %d,%d with score %d", item->data.pos.x, item->data.pos.y, item->data.score());
+			item = item->next;
+		}*/
+
+		pnode = open_list.getNodeLowestScore();
+
+		if (pnode->data.pos == destination)
+		{
+			close_list.list.add(pnode->data);
+			break;
+		}
+	}
+
+	const pathNode *item = &(close_list.list.getLast()->data);
+	while (item != NULL)
+	{
+		path_found.pushBack(item->pos);
+		item = item->parent;
+	}
+
+	return path_found.getNumElements();
 }
 
 bool PathFinding::checkBoundaries(const iPoint& pos) const
@@ -148,21 +222,14 @@ bool PathFinding::checkBoundaries(const iPoint& pos) const
 
 bool PathFinding::isWalkable(const iPoint& pos) const
 {
-	if (checkBoundaries(pos))
-		return (bool)map_data[pos.x * width + pos.y];
+	if (checkBoundaries(pos) && map_data[pos.y * width + pos.x] != 0)
+		return true;
 	return false;
 }
 
 uchar PathFinding::getTileAt(const iPoint& pos) const
 {
 	if (checkBoundaries(pos))
-		return map_data[pos.x * width + pos.y];
+		return map_data[pos.y * width + pos.x];
 	return INVALID_WALKABILTY_CODE;
 }
-
-//bool PathFinding::findPath(const iPoint &origin, const iPoint &destination)
-//{
-//	bool ret = false;
-//
-//	return ret;
-//}

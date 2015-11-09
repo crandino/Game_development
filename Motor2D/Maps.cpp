@@ -97,7 +97,7 @@ bool Maps::createWalkabilityMap(int &width, int &height, uchar **buffer)
 		uchar *map = new uchar[layer->width * layer->height];
 		memset(map, 1, layer->width * layer->height);
 		
-		for (uint i = 0; i < layer->width * layer->height; i++)
+		for (int i = 0; i < layer->width * layer->height; i++)
 		{			
 			TileSet *tile_set = getTilesetFromTileId(layer->data[i]);
 			if (tile_set != NULL)
@@ -153,7 +153,7 @@ iPoint Maps::worldToMap(int x, int y) const
 	{
 		float half_width = data.tile_width * 0.5f;
 		float half_height = data.tile_height * 0.5f;
-		ret.x = int((x / half_width + y / half_height) / 2);
+		ret.x = int((x / half_width + y / half_height) / 2) - 1;
 		ret.y = int((y / half_height - (x / half_width)) / 2);
 		break;
 	}
