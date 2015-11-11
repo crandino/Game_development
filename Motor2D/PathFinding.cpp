@@ -20,10 +20,10 @@ uint pathNode::findWalkableAdjacents(pathList& list_to_fill) const
 	iPoint new_pos;
 	uint items_added = 0;
 
-	LOG(" Origin position : %d,%d", pos.x, pos.y);
+	//LOG(" Origin position : %d,%d", pos.x, pos.y);
 	//Nodes-- > North, West, South, East
 	new_pos.set(pos.x, pos.y - 1);
-	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
+	//LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
 		//pathNode node_N(-1, -1, new_pos, this);
@@ -32,7 +32,7 @@ uint pathNode::findWalkableAdjacents(pathList& list_to_fill) const
 	}
 
 	new_pos.set(pos.x - 1, pos.y);
-	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
+	//LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
 		//pathNode node_W(-1, -1, new_pos, this);
@@ -41,7 +41,7 @@ uint pathNode::findWalkableAdjacents(pathList& list_to_fill) const
 	}
 
 	new_pos.set(pos.x, pos.y + 1);
-	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
+	//LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
 		//pathNode node_S(-1, -1, new_pos, this);
@@ -50,14 +50,14 @@ uint pathNode::findWalkableAdjacents(pathList& list_to_fill) const
 	}
 
 	new_pos.set(pos.x + 1, pos.y);
-	LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
+	//LOG(" Tile %d,%d -> Walkability = %d", new_pos.x, new_pos.y, app->path->isWalkable(new_pos));
 	if (app->path->isWalkable(new_pos))
 	{
 		//pathNode node_E(-1, -1, new_pos, this);
 		items_added++;
 		list_to_fill.list.add(pathNode(-1, -1, new_pos, this));
 	}
-	LOG(" ------------------------- ");
+	//LOG(" ------------------------- ");
 
 	return items_added - items_before;
 }
@@ -150,12 +150,11 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 	open_list.list.add(node);
 	doubleNode<pathNode> *pnode = open_list.list.getFirst();	
 
-	while (pnode != NULL)
+	while (open_list.list.count() > 0)
 	{		
-		pathNode node_cp(pnode->data);
-		close_list.list.add(pnode->data);
-
 		pathList candidate_nodes;
+		pathNode node_cp(pnode->data);
+		close_list.list.add(node_cp);
 		int items_added = node_cp.findWalkableAdjacents(candidate_nodes);
 		doubleNode<pathNode> *item = candidate_nodes.list.getLast();
 
@@ -168,11 +167,11 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 			}
 			else if (open_list.find(item->data.pos))
 			{
-				doubleNode<pathNode> *pnode1 = open_list.find(item->data.pos);
-				if (item->data.calculateF(destination) < pnode1->data.score())
+				doubleNode<pathNode> *to_compare = open_list.find(item->data.pos);
+				if (item->data.calculateF(destination) < to_compare->data.score())
 				{
-					pnode1->data.parent = item->data.parent;
-					pnode1->data.calculateF(destination);
+					to_compare->data.parent = item->data.parent;
+					to_compare->data.calculateF(destination);
 				}
 			}
 			else
@@ -183,14 +182,16 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 			item = item->previous;
 		}
 
-		open_list.list.del(pnode);
-	/*	item = open_list.list.getFirst();
-		LOG(" ------------------------ ");
-		while (item != NULL)
+		doubleNode<pathNode> *item_test = open_list.list.getFirst();
+		while (item_test)
 		{
-			LOG("Tile %d,%d with score %d", item->data.pos.x, item->data.pos.y, item->data.score());
-			item = item->next;
-		}*/
+			LOG("Address %p of Tile %d,%d with score %d and parent %p", &(item_test->data), item_test->data.pos.x, item_test->data.pos.y,
+				item_test->data.score(), item_test->data.parent);
+			item_test = item_test->next;
+		}
+		LOG(" ------------------------ ");
+
+		open_list.list.del(pnode);
 		pnode = open_list.getNodeLowestScore();		
 
 		if (pnode->data.pos == destination)

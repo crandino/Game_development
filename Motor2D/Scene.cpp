@@ -101,7 +101,7 @@ bool Scene::update()
 		app->audio->volumeDown();
 	
 	app->map->draw();
-	//app->path->createPath(iPoint(12,6), iPoint(12,4));
+	app->path->createPath(iPoint(12,6), iPoint(12,4));
 
 	iPoint pos;
 	if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
