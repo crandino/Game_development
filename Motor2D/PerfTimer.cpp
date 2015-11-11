@@ -11,7 +11,8 @@ uint64 PerfTimer::frequency = 0;
 // ---------------------------------------------
 PerfTimer::PerfTimer()
 {
-	frequency = SDL_GetPerformanceFrequency();
+	if (frequency == 0)
+		frequency = SDL_GetPerformanceFrequency();
 	start();
 }
 
@@ -24,7 +25,7 @@ void PerfTimer::start()
 // ---------------------------------------------
 double PerfTimer::readMs() const
 {
-	return readTicks() / (frequency * 1000.0f);
+	return ((double)readTicks() / (double)frequency) * 1000.0f;
 }
 
 // ---------------------------------------------

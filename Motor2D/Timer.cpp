@@ -27,5 +27,5 @@ uint32 Timer::read() const
 // ---------------------------------------------
 float Timer::readSec() const
 {
-	return (SDL_GetTicks() - started_at) / 1000.f;
+	return read() / 1000.f;
 }

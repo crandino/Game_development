@@ -102,10 +102,11 @@ private:
 
 	Timer					timer;
 	PerfTimer		   perf_timer;
+	Timer			   total_time;
 
+	uint			   frame_rate;
 	float				  avg_fps;
 	float   seconds_since_startup;
-	float					   dt;
 	uint32			last_frame_ms;
 	uint32	frames_on_last_update;
 	uint64			  frame_count;

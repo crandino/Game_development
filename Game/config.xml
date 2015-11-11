@@ -2,6 +2,9 @@
 
 <config>
 
+  <!-- App Configuration -->
+  <app framerate="100" />
+  
   <!-- Each module has its own node. Separate configuration -->
   <input>
     

@@ -94,6 +94,8 @@ bool App::awake()
 
 	config_node = loadConfig(config_file);
 
+	frame_rate = config_node.child("app").attribute("framerate").as_int(0);
+
 	doubleNode<Module*>* item = modules.getFirst();
 
 	while(item != NULL && ret == true)
@@ -110,13 +112,14 @@ bool App::start()
 {
 	avg_fps = 0.0f;
 	seconds_since_startup = 0.0f;
-	dt = 0.0f;
 	last_frame_ms = 0;
 	frames_on_last_update = 0;
 	frame_count = 0;
 
 	last_time = 0.0f;
 	last_frames = 0;
+
+	total_time.start();
 
 	bool ret = true;
 	doubleNode<Module*>* item;
@@ -158,7 +161,6 @@ void App::prepareUpdate()
 {
 	// Starting timers
 	timer.start();
-	perf_timer.start();
 }
 
 // ---------------------------------------------
@@ -170,11 +172,11 @@ void App::finishUpdate()
 	// Amount of frames since startup
 	frame_count++;
 	// Amount of time since game start (use a low resolution timer)
-	seconds_since_startup += timer.readSec();
+	seconds_since_startup = total_time.readSec();
 	// Average FPS for the whole game life
 	avg_fps = frame_count / seconds_since_startup;
 	// Amount of ms took the last update
-	dt = timer.readSec();
+	last_frame_ms = timer.readSec() * 1000.0f;
 	// Amount of frames during the last second
 	if (seconds_since_startup - last_time > 1.0f)
 	{
@@ -184,10 +186,20 @@ void App::finishUpdate()
 	}
 
 	static char title[256];
-	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
-		avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
+	sprintf_s(title, 256, "Av.FPS: %.2f Last sec frames: %u Last dt: %u Time since startup: %.3f Frame Count: %lu ",
+		avg_fps, frames_on_last_update, last_frame_ms, seconds_since_startup, frame_count);
 
-	//app->win->setTitle(title);
+	app->win->setTitle(title);
+
+	// Delay to achieve cap framerate
+	if (frame_rate != 0)
+	{
+		if ((1000.0f / frame_rate) - (last_frame_ms) > 0)
+		{
+			Uint32 delay = (1000.0f / frame_rate) - (last_frame_ms);
+			SDL_Delay(delay);
+		}						
+	}	
 }
 
 // Call modules before each loop iteration

@@ -148,14 +148,15 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 
 	pathNode node(0, 0, origin, NULL);
 	open_list.list.add(node);
-	doubleNode<pathNode> *pnode = open_list.list.getFirst();
+	doubleNode<pathNode> *pnode = open_list.list.getFirst();	
 
-	while (open_list.list.count() > 0)
-	{
+	while (pnode != NULL)
+	{		
+		pathNode node_cp(pnode->data);
 		close_list.list.add(pnode->data);
 
 		pathList candidate_nodes;
-		int items_added = pnode->data.findWalkableAdjacents(candidate_nodes);
+		int items_added = node_cp.findWalkableAdjacents(candidate_nodes);
 		doubleNode<pathNode> *item = candidate_nodes.list.getLast();
 
 		for (int i = 0; i < items_added; i++)
@@ -190,8 +191,7 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 			LOG("Tile %d,%d with score %d", item->data.pos.x, item->data.pos.y, item->data.score());
 			item = item->next;
 		}*/
-
-		pnode = open_list.getNodeLowestScore();
+		pnode = open_list.getNodeLowestScore();		
 
 		if (pnode->data.pos == destination)
 		{

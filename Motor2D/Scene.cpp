@@ -101,7 +101,7 @@ bool Scene::update()
 		app->audio->volumeDown();
 	
 	app->map->draw();
-	app->path->createPath(iPoint(12,6), iPoint(12,4));
+	//app->path->createPath(iPoint(12,6), iPoint(12,4));
 
 	iPoint pos;
 	if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
@@ -134,7 +134,7 @@ bool Scene::update()
 		map_coordinates.x, map_coordinates.y,
 		app->path->isWalkable(map_coordinates));
 
-	app->win->setTitle(title.GetString());
+	//app->win->setTitle(title.GetString());
 
 	return true;
 }
