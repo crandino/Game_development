@@ -189,7 +189,7 @@ void App::finishUpdate()
 	sprintf_s(title, 256, "Av.FPS: %.2f Last sec frames: %u Last dt: %u Time since startup: %.3f Frame Count: %lu ",
 		avg_fps, frames_on_last_update, last_frame_ms, seconds_since_startup, frame_count);
 
-	app->win->setTitle(title);
+	//app->win->setTitle(title);
 
 	// Delay to achieve cap framerate
 	if (frame_rate != 0)

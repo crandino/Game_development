@@ -90,12 +90,7 @@ doubleNode<pathNode> *pathList::getNodeLowestScore() const
 {
 	doubleNode<pathNode> *item = list.getFirst();
 	doubleNode<pathNode> *item_lowest_score = NULL;
-	int score;
-
-	if (item != NULL)
-		score = item->data.score();
-	else
-		return item_lowest_score;
+	int score = 65355;
 
 	while (item != NULL)
 	{
@@ -146,16 +141,24 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 	// Open and close list
 	pathList open_list, close_list;
 
-	pathNode node(0, 0, origin, NULL);
-	open_list.list.add(node);
-	doubleNode<pathNode> *pnode = open_list.list.getFirst();	
+	open_list.list.add(pathNode(0, 0, origin, NULL));
 
 	while (open_list.list.count() > 0)
 	{		
-		pathList candidate_nodes;
-		pathNode node_cp(pnode->data);
-		close_list.list.add(node_cp);
-		int items_added = node_cp.findWalkableAdjacents(candidate_nodes);
+		doubleNode<pathNode> *pnode = open_list.getNodeLowestScore();
+		close_list.list.add(pnode->data);
+		iPoint pos = pnode->data.pos;
+		open_list.list.del(pnode);
+		pnode = close_list.find(pos);
+
+		if (pnode->data.pos == destination)
+		{
+			close_list.list.add(pnode->data);
+			break;
+		}
+
+		pathList candidate_nodes;		
+		int items_added = pnode->data.findWalkableAdjacents(candidate_nodes);
 		doubleNode<pathNode> *item = candidate_nodes.list.getLast();
 
 		for (int i = 0; i < items_added; i++)
@@ -181,24 +184,6 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 			}
 			item = item->previous;
 		}
-
-		doubleNode<pathNode> *item_test = open_list.list.getFirst();
-		while (item_test)
-		{
-			LOG("Address %p of Tile %d,%d with score %d and parent %p", &(item_test->data), item_test->data.pos.x, item_test->data.pos.y,
-				item_test->data.score(), item_test->data.parent);
-			item_test = item_test->next;
-		}
-		LOG(" ------------------------ ");
-
-		open_list.list.del(pnode);
-		pnode = open_list.getNodeLowestScore();		
-
-		if (pnode->data.pos == destination)
-		{
-			close_list.list.add(pnode->data);
-			break;
-		}
 	}
 
 	const pathNode *item = &(close_list.list.getLast()->data);
@@ -208,7 +193,14 @@ int PathFinding::createPath(const iPoint& origin, const iPoint& destination)
 		item = item->parent;
 	}
 
+	path_found.flip();
+
 	return path_found.getNumElements();
+}
+
+const DynArray<iPoint> *PathFinding::getLastPath() const
+{
+	return &path_found;
 }
 
 bool PathFinding::checkBoundaries(const iPoint& pos) const

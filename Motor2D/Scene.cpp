@@ -101,7 +101,6 @@ bool Scene::update()
 		app->audio->volumeDown();
 	
 	app->map->draw();
-	app->path->createPath(iPoint(12,6), iPoint(12,4));
 
 	iPoint pos;
 	if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
@@ -115,26 +114,38 @@ bool Scene::update()
 		else
 		{
 			destination = app->render->screenToWorld(pos.x, pos.y);
-			//app->path->createPath(app->map->worldToMap(origin.x, origin.y), app->map->worldToMap(destination.x, destination.y));
+			app->path->createPath(app->map->worldToMap(origin.x, origin.y), app->map->worldToMap(destination.x, destination.y));
 			path_selected = false;
 		}
 	}
-	//pos = app->map->mapToWorld(player_x, player_y);
-	//app->render->blit(debug_tex, pos.x, pos.y);
-	/*app->render->blit(debug_tex, origin.x, origin.y);
-	app->render->blit(debug_tex, destination.x, destination.y);*/
+
+	iPoint p;
+	p = app->map->worldToMap(origin.x, origin.y);
+	p = app->map->mapToWorld(p.x, p.y);
+	app->render->blit(debug_tex, p.x, p.y);
+	p = app->map->worldToMap(destination.x, destination.y);
+	p = app->map->mapToWorld(p.x, p.y);
+	app->render->blit(debug_tex, p.x, p.y);
+
+	const DynArray<iPoint> *parray = app->path->getLastPath();
+	for (int i = 0; i < parray->getNumElements(); i++)
+	{
+		iPoint pos = app->map->mapToWorld((*parray)[i].x, (*parray)[i].y);
+		app->render->blit(debug_tex, pos.x, pos.y);
+	}
 	
 	int x, y;
 	app->input->getMousePosition(x, y);
 	iPoint map_coordinates = app->map->worldToMap(x - app->render->camera.x, y - app->render->camera.y);
-	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d Walkable: %d",
+	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d Walkable: %d Mouse: %d,%d",
 		app->map->data.width, app->map->data.height,
 		app->map->data.tile_width, app->map->data.tile_height,
 		app->map->data.tilesets.count(),
 		map_coordinates.x, map_coordinates.y,
-		app->path->isWalkable(map_coordinates));
+		app->path->isWalkable(map_coordinates),
+		x,y);
 
-	//app->win->setTitle(title.GetString());
+	app->win->setTitle(title.GetString());
 
 	return true;
 }
