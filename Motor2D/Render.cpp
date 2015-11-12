@@ -66,7 +66,7 @@ bool Render::preUpdate()
 	return true;
 }
 
-bool Render::update()
+bool Render::update(float dt)
 {
 	return true;
 }

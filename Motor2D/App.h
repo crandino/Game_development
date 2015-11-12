@@ -49,6 +49,7 @@ public:
 	void loadGame(const char *file);
 	void saveGame(const char *file) const;
 	void *getSaveGames(DList<p2SString> &list_saved_games) const;
+	uint getFrameRate() const;
 
 private:
 
@@ -103,10 +104,12 @@ private:
 	Timer					timer;
 	PerfTimer		   perf_timer;
 	Timer			   total_time;
+	Timer				 dt_timer;
 
 	uint			   frame_rate;
 	float				  avg_fps;
 	float   seconds_since_startup;
+	float					   dt;
 	uint32			last_frame_ms;
 	uint32	frames_on_last_update;
 	uint64			  frame_count;

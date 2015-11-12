@@ -161,6 +161,10 @@ void App::prepareUpdate()
 {
 	// Starting timers
 	timer.start();
+
+	// Calculate dt. Differential time since last frame.
+	dt = dt_timer.readSec() * 1000.0f;
+	dt_timer.start();
 }
 
 // ---------------------------------------------
@@ -189,7 +193,7 @@ void App::finishUpdate()
 	sprintf_s(title, 256, "Av.FPS: %.2f Last sec frames: %u Last dt: %u Time since startup: %.3f Frame Count: %lu ",
 		avg_fps, frames_on_last_update, last_frame_ms, seconds_since_startup, frame_count);
 
-	//app->win->setTitle(title);
+	app->win->setTitle(title);
 
 	// Delay to achieve cap framerate
 	if (frame_rate != 0)
@@ -240,7 +244,7 @@ bool App::doUpdate()
 			continue;
 		}
 
-		ret = item->data->update();
+		ret = item->data->update(dt);
 	}
 
 	return ret;
@@ -388,4 +392,9 @@ bool App::saveGameNow() const
 	data.reset();
 	want_to_save = false;
 	return ret;
+}
+
+uint App::getFrameRate() const
+{
+	return frame_rate;
 }

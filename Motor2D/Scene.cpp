@@ -10,6 +10,9 @@
 #include "Scene.h"
 #include "Maps.h"
 
+#define FRAME_LOGIC 60
+#define MS_PER_LOGIC_FRAME 1000.0f/FRAME_LOGIC
+
 Scene::Scene() : Module()
 {
 	name.create("scene");
@@ -43,6 +46,8 @@ bool Scene::start()
 
 	debug_tex = app->tex->loadTexture("textures/path.png");
 	player_x = player_y = 10;
+	origin.set(0, 0);
+	destination.set(0, 0);
 
 	return true;
 }
@@ -54,8 +59,10 @@ bool Scene::preUpdate()
 }
 
 // Called each loop iteration
-bool Scene::update()
+bool Scene::update(float dt)
 {
+	float cam_speed = ceil(25.0f * (dt/MS_PER_LOGIC_FRAME));
+
 	if (app->input->getKey(SDL_SCANCODE_L) == KEY_DOWN)
 		app->loadGame("save_game.xml");
 
@@ -63,16 +70,16 @@ bool Scene::update()
 		app->saveGame("save_game.xml");
 
 	if (app->input->getKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y -= 2;
+		app->render->camera.y -= cam_speed;
 
 	if (app->input->getKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y += 2;
+		app->render->camera.y += cam_speed;
 
 	if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x -= 2;
+		app->render->camera.x += cam_speed;
 
 	if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x += 2;
+		app->render->camera.x -= cam_speed;
 
 	if (app->input->getKey(SDL_SCANCODE_W) == KEY_DOWN)
 	{
@@ -137,15 +144,14 @@ bool Scene::update()
 	int x, y;
 	app->input->getMousePosition(x, y);
 	iPoint map_coordinates = app->map->worldToMap(x - app->render->camera.x, y - app->render->camera.y);
-	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d Walkable: %d Mouse: %d,%d",
+	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d Walkable: %d",
 		app->map->data.width, app->map->data.height,
 		app->map->data.tile_width, app->map->data.tile_height,
 		app->map->data.tilesets.count(),
 		map_coordinates.x, map_coordinates.y,
-		app->path->isWalkable(map_coordinates),
-		x,y);
+		app->path->isWalkable(map_coordinates));
 
-	app->win->setTitle(title.GetString());
+	//app->win->setTitle(title.GetString());
 
 	return true;
 }
