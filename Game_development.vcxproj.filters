@@ -71,6 +71,12 @@
     <ClCompile Include="Motor2D\Timer.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="Motor2D\Fonts.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Motor2D\Gui.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Motor2D\App.h">
@@ -135,6 +141,12 @@
     </ClInclude>
     <ClInclude Include="Motor2D\Timer.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Motor2D\Fonts.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Motor2D\Gui.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

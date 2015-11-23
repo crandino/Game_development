@@ -6,6 +6,7 @@
 #include "Audio.h"
 #include "PathFinding.h"
 #include "Render.h"
+#include "Gui.h"
 #include "Window.h"
 #include "Scene.h"
 #include "Maps.h"
@@ -49,6 +50,10 @@ bool Scene::start()
 	origin.set(0, 0);
 	destination.set(0, 0);
 
+	// UI elements
+	app->gui->createLabel("Hola, me llamo Carlos", { 50, 50 });
+	app->gui->createImage(NULL, { 50, 70 }, SDL_Rect{ 485, 829, 328, 103 });
+
 	return true;
 }
 
@@ -70,10 +75,10 @@ bool Scene::update(float dt)
 		app->saveGame("save_game.xml");
 
 	if (app->input->getKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y -= cam_speed;
+		app->render->camera.y += cam_speed;
 
 	if (app->input->getKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y += cam_speed;
+		app->render->camera.y -= cam_speed;
 
 	if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		app->render->camera.x += cam_speed;

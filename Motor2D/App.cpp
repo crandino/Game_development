@@ -8,6 +8,8 @@
 #include "Audio.h"
 #include "Scene.h"
 #include "Maps.h"
+#include "Fonts.h"
+#include "Gui.h"
 #include "FileSystem.h"
 #include "PathFinding.h"
 #include "App.h"
@@ -25,6 +27,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	render = new Render();
 	tex = new Textures();
 	audio = new Audio();
+	fonts = new Fonts();
+	gui = new Gui();
 	scene = new Scene();
 	map = new Maps();
 	path = new PathFinding();
@@ -37,6 +41,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	addModule(win);
 	addModule(tex);
 	addModule(audio);
+	addModule(fonts);
+	addModule(gui);
 	addModule(map);
 	addModule(path);
 	addModule(scene);

@@ -13,6 +13,8 @@ class Input;
 class Render;
 class Textures;
 class Audio;
+class Fonts;
+class Gui;
 class FileSystem;
 class Maps;
 class PathFinding;
@@ -85,6 +87,8 @@ public:
 	Render*				render;
 	Textures*			tex;
 	Audio*				audio;
+	Fonts*				fonts;
+	Gui*				gui;
 	Scene*				scene;
 	Maps*				map;
 	PathFinding*		path;

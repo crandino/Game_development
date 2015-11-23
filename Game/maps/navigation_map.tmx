@@ -669,7 +669,7 @@
  </layer>
  <layer name="Navigation" width="25" height="25">
   <properties>
-   <property name="Draw" value="1"/>
+   <property name="Draw" value="0"/>
    <property name="Navigation" value="1"/>
   </properties>
   <data>
