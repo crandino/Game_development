@@ -34,7 +34,8 @@ bool Gui::awake(pugi::xml_node& conf)
 bool Gui::start()
 {
 	atlas = app->tex->loadTexture(atlas_file_name.GetString());
-	screen = new UIimage(this);
+	SDL_Rect screen_rect = { 0, 0, 800, 600 };
+	screen = new UIimage({ 0, 0 }, NULL, screen_rect, NULL, NULL);
 	screen->interactable = false;
 	screen->dragable = true;
 	focus = screen;
@@ -123,75 +124,47 @@ const SDL_Texture* Gui::getAtlas() const
 }
 
 // Factories for class Gui ---------------------------------------------------
-const UIlabel* Gui::createLabel(const char *string, iPoint p, Module *mod, UIelement *parent)
+const UIlabel* Gui::createLabel(iPoint p, const char *string, _TTF_Font *font, Module *mod, UIelement *parent)
 {
-	UIlabel *l = new UIlabel(mod);
-	l->parent = parent != NULL ? parent : screen;
-	l->text = string;
-	l->text_image = app->fonts->print(string);
-	l->setLocalPos(p);
-	SDL_QueryTexture(l->text_image, NULL, NULL, &l->width, &l->height);
-
+	UIlabel *l = new UIlabel(p, NULL, string, font, mod, parent);
 	UIelement_list.add(l);
 	return l;
 }
 
-const UIimage* Gui::createImage(SDL_Texture *tex, iPoint p, SDL_Rect r_to_draw, Module *mod, UIelement *parent)
+const UIimage* Gui::createImage(iPoint p, SDL_Texture *tex, SDL_Rect &section, Module *mod, UIelement *parent)
 {
-	UIimage *i = new UIimage(mod);
-	i->parent = parent != NULL ? parent : screen;
-
-	i->image.img = tex != NULL ? tex : (SDL_Texture*)app->gui->getAtlas();
-	i->setLocalPos(p);
-	i->width = r_to_draw.w;
-	i->height = r_to_draw.h;
-	i->image.draw_area = r_to_draw;	
+	UIimage *i = new UIimage(p, tex, section, mod, parent);
 	UIelement_list.add(i);
 	return i;
 }
 
-const UIbutton *Gui::createButton(SDL_Texture *idle_tex, SDL_Texture *hover_tex, SDL_Texture *clicked_tex, 
-								  SDL_Rect idle_rect, SDL_Rect hover_rect, SDL_Rect clicked_rect, iPoint p,
+const UIbutton *Gui::createButton(iPoint p, SDL_Texture *tex_idle, SDL_Rect& section_idle, SDL_Texture *tex_hover,
+								  SDL_Rect& section_hover, SDL_Texture *tex_clicked, SDL_Rect& section_clicked,
 								  Module *mod, UIelement *parent)
 {
-	UIbutton *b = new UIbutton(mod);
-	b->parent = parent != NULL ? parent : screen;
-
-	b->idle.img = idle_tex != NULL ? idle_tex : (SDL_Texture*) app->gui->getAtlas();
-	b->idle.draw_area = idle_rect;
-
-	b->hover.img = hover_tex != NULL ? hover_tex : (SDL_Texture*)app->gui->getAtlas();
-	b->hover.draw_area = hover_rect;
-	
-	b->clicked.img = clicked_tex != NULL ? clicked_tex : (SDL_Texture*)app->gui->getAtlas();
-	b->clicked.draw_area = clicked_rect;
-
-	b->current_state = &b->idle;
-	b->setLocalPos(p);
-	b->width = idle_rect.w;
-	b->height = idle_rect.h;
+	UIbutton *b = new UIbutton(p,tex_idle, section_idle, tex_hover, section_hover, tex_clicked, section_clicked, mod, parent );
 	UIelement_list.add(b);
 	return b;	
 }
 
-const UIinputBox *Gui::createInputBox(const char *string, SDL_Texture *frame_tex, SDL_Rect frame_rect,
-									  SDL_Rect write_section, iPoint pos, Module *mod, UIelement *parent)
-{
-	UIinputBox *i = new UIinputBox(mod);
-	i->parent = parent != NULL ? parent : screen;
-
-	i->frame.img = frame_tex != NULL ? frame_tex : (SDL_Texture*)app->gui->getAtlas();
-	i->setLocalPos(pos);
-	i->width = frame_rect.w;
-	i->height = frame_rect.h;
-	i->frame.draw_area = frame_rect;
-	i->write_section = write_section;
-	i->text = string;
-	i->text_image = app->fonts->print(string);
-	//SDL_QueryTexture(l->text_image, NULL, NULL, &l->width, &l->height);
-	UIelement_list.add(i);
-	return i;
-}
+//const UIinputBox *Gui::createInputBox(const char *string, SDL_Texture *frame_tex, SDL_Rect frame_rect,
+//									  SDL_Rect write_section, iPoint pos, Module *mod, UIelement *parent)
+//{
+//	UIinputBox *i = new UIinputBox(mod);
+//	i->parent = parent != NULL ? parent : screen;
+//
+//	i->frame.img = frame_tex != NULL ? frame_tex : (SDL_Texture*)app->gui->getAtlas();
+//	i->setLocalPos(pos);
+//	i->width = frame_rect.w;
+//	i->height = frame_rect.h;
+//	i->frame.draw_area = frame_rect;
+//	i->write_section = write_section;
+//	i->text = string;
+//	i->text_image = app->fonts->print(string);
+//	//SDL_QueryTexture(l->text_image, NULL, NULL, &l->width, &l->height);
+//	UIelement_list.add(i);
+//	return i;
+//}
 
 void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 {
@@ -203,22 +176,22 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 		switch (mouse_event)
 		{
 		case MOUSE_ENTER:
-			b->current_state = &b->hover;
+			b->setHoverState();
 			focus = b;
 			break;
 		case MOUSE_LEAVE:
-			b->current_state = &b->idle;
+			b->setIdleState();
 			break;
 		case MOUSE_CLICK_LEFT:
 		case MOUSE_CLICK_RIGHT:
-			b->current_state = &b->clicked;
+			b->setClickedState();
 			break;
 		case MOUSE_REPEAT_LEFT:
 			b->dragElement();
 			break;
 		case MOUSE_LEAVE_LEFT:
 		case MOUSE_LEAVE_RIGHT:
-			b->current_state = &b->hover;
+			b->setHoverState();
 			break;
 		}
 		break;

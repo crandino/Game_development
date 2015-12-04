@@ -11,6 +11,7 @@ class UIbutton;
 class UIlabel;
 class UIinputBox;
 class UIelement;
+struct _TTF_Font;
 
 #define CURSOR_WIDTH 2
 
@@ -37,6 +38,8 @@ enum UI_TYPE
 class Gui : public Module
 {
 public:
+
+	UIelement				*screen;
 
 	Gui();
 
@@ -66,11 +69,11 @@ public:
 	UIelement *whichUIelemOnMouse() const;
 
 	// Gui creation functions
-	const UIlabel* createLabel(const char *string, iPoint pos, Module *mod, UIelement *parent = NULL);
-	const UIimage* createImage(SDL_Texture *tex, iPoint pos, SDL_Rect r, Module *mod, UIelement *parent = NULL);
-	const UIbutton* createButton(SDL_Texture *idle_tex, SDL_Texture *hover_tex, SDL_Texture *clicked_tex,
-								 SDL_Rect idle_rect, SDL_Rect hover_rect, SDL_Rect clicked_rect,
-								 iPoint pos, Module *mod, UIelement *parent = NULL);
+	const UIlabel *createLabel(iPoint p, const char *string, _TTF_Font *font = NULL, Module *mod = NULL, UIelement *parent = NULL);
+	const UIimage *createImage(iPoint p, SDL_Texture *tex, SDL_Rect &section, Module *mod = NULL, UIelement *parent = NULL);
+	const UIbutton *Gui::createButton(iPoint p, SDL_Texture *tex_idle, SDL_Rect& section_idle, SDL_Texture *tex_hover,
+									  SDL_Rect& section_hover, SDL_Texture *tex_clicked, SDL_Rect& section_clicked,
+									  Module *mod, UIelement *parent);
 	const UIinputBox* createInputBox(const char *string, SDL_Texture *frame_tex, SDL_Rect frame_rect, 
 									 SDL_Rect write_section, iPoint pos, Module *mod, UIelement *parent = NULL);
 
@@ -79,7 +82,6 @@ public:
 
 private:	
 
-	UIelement				*screen;
 	UIelement				*focus;
 
 	DList<UIelement*>		UIelement_list;

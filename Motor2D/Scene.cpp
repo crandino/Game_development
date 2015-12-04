@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Textures.h"
 #include "Audio.h"
+#include "Fonts.h"
 #include "PathFinding.h"
 #include "Render.h"
 #include "Gui.h"
@@ -50,12 +51,21 @@ bool Scene::start()
 	origin.set(0, 0);
 	destination.set(0, 0);
 
-	// UI elements
-	const UIimage *w = app->gui->createImage(NULL, { 300, 100 }, { 0, 512, 483, 512 }, this);
-	app->gui->createLabel("Window Title", { 200, 60 }, this, (UIelement*)w);
-	const UIbutton *b = app->gui->createButton(NULL, NULL, NULL, { 642, 169, 229, 69 }, { 0, 113, 229, 69 }, { 411, 169, 229, 69 }, { 120, 300 }, this, (UIelement*)w);
-	app->gui->createLabel("Hola, me llamo Carlos", { 50, 25 }, this, (UIelement*)b);
-	app->gui->createInputBox("Your name", NULL, { 455, 569, 344, 61 }, { 50, 10, 320, 50 }, { 40, 220 }, this, (UIelement*)w);
+	// ----- UI elements creation -----
+	// Common font
+	_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 16);
+	// Main Window and title
+	SDL_Rect win_rect = { 0, 512, 483, 512 };
+	const UIimage *w = app->gui->createImage({ 300, 100 }, NULL, win_rect, this);
+	app->gui->createLabel({ 200, 60 }, "Window Title", UIfont, this, (UIelement*)w);
+
+	// Button and label of the button
+	SDL_Rect idle_section = { 642, 169, 229, 69 };
+	SDL_Rect hover_section = { 0, 113, 229, 69 };
+	SDL_Rect clicked_section = { 411, 169, 229, 69 };
+	const UIbutton *b = app->gui->createButton({ 120, 300 }, NULL, idle_section, NULL, hover_section, NULL, clicked_section, this, (UIelement*)w);
+	app->gui->createLabel({ 50, 25 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
+	//app->gui->createInputBox("Your name", NULL, { 455, 569, 344, 61 }, { 50, 10, 320, 50 }, { 40, 220 }, this, (UIelement*)w);
 	
 	//app->gui->createImage(NULL, { 50, 70 }, SDL_Rect{ 485, 829, 328, 103 }, this);
 	return true;
