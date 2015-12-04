@@ -51,6 +51,8 @@ bool Input::preUpdate()
 	static SDL_Event event;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
+	mouse_motion_x = mouse_motion_y = 0;
+
 	for (int i = 0; i < MAX_KEYS; i++)
 	{
 		if (keys[i] == 1)
@@ -144,14 +146,16 @@ bool Input::getWindowEvent(EventWindow ev)
 	return windowEvents[ev];
 }
 
-void Input::getMousePosition(int& x, int& y)
+iPoint Input::getMousePosition()
 {
-	x = mouse_x;
-	y = mouse_y;
+	return iPoint(mouse_x, mouse_y);
+	/*y = mouse_y;
+	x = mouse_x;*/
 }
 
-void Input::getMouseMotion(int& x, int& y)
+iPoint Input::getMouseMotion()
 {
-	x = mouse_motion_x;
-	y = mouse_motion_y;
+	return iPoint(mouse_motion_x, mouse_motion_y);
+	/*x = mouse_motion_x;
+	y = mouse_motion_y;*/
 }

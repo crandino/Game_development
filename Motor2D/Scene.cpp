@@ -51,9 +51,13 @@ bool Scene::start()
 	destination.set(0, 0);
 
 	// UI elements
-	app->gui->createLabel("Hola, me llamo Carlos", { 50, 50 });
-	app->gui->createImage(NULL, { 50, 70 }, SDL_Rect{ 485, 829, 328, 103 });
-
+	const UIimage *w = app->gui->createImage(NULL, { 300, 100 }, { 0, 512, 483, 512 }, this);
+	app->gui->createLabel("Window Title", { 200, 60 }, this, (UIelement*)w);
+	const UIbutton *b = app->gui->createButton(NULL, NULL, NULL, { 642, 169, 229, 69 }, { 0, 113, 229, 69 }, { 411, 169, 229, 69 }, { 120, 300 }, this, (UIelement*)w);
+	app->gui->createLabel("Hola, me llamo Carlos", { 50, 25 }, this, (UIelement*)b);
+	app->gui->createInputBox("Your name", NULL, { 455, 569, 344, 61 }, { 50, 10, 320, 50 }, { 40, 220 }, this, (UIelement*)w);
+	
+	//app->gui->createImage(NULL, { 50, 70 }, SDL_Rect{ 485, 829, 328, 103 }, this);
 	return true;
 }
 
@@ -117,7 +121,7 @@ bool Scene::update(float dt)
 	iPoint pos;
 	if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
 	{
-		app->input->getMousePosition(pos.x, pos.y);
+		pos = app->input->getMousePosition();
 		if (path_selected == false)
 		{
 			origin = app->render->screenToWorld(pos.x, pos.y);
@@ -140,15 +144,14 @@ bool Scene::update(float dt)
 	app->render->blit(debug_tex, p.x, p.y);
 
 	const DynArray<iPoint> *parray = app->path->getLastPath();
-	for (int i = 0; i < parray->getNumElements(); i++)
+	for (uint i = 0; i < parray->getNumElements(); i++)
 	{
 		iPoint pos = app->map->mapToWorld((*parray)[i].x, (*parray)[i].y);
 		app->render->blit(debug_tex, pos.x, pos.y);
 	}
 	
-	int x, y;
-	app->input->getMousePosition(x, y);
-	iPoint map_coordinates = app->map->worldToMap(x - app->render->camera.x, y - app->render->camera.y);
+	pos = app->input->getMousePosition();
+	iPoint map_coordinates = app->map->worldToMap(pos.x - app->render->camera.x, pos.y - app->render->camera.y);
 	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d Walkable: %d",
 		app->map->data.width, app->map->data.height,
 		app->map->data.tile_width, app->map->data.tile_height,
@@ -176,6 +179,32 @@ bool Scene::postUpdate()
 bool Scene::cleanUp()
 {
 	LOG("Freeing scene");
-
 	return true;
+}
+
+void Scene::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
+{
+	switch (mouse_event)
+	{
+	case MOUSE_ENTER:
+		LOG("It's hover!");
+		break;
+	case MOUSE_LEAVE:
+		LOG("It's leaving!");
+		break;
+	case MOUSE_CLICK_LEFT:
+		LOG("Left click on mouse.");
+		break;
+	case MOUSE_LEAVE_LEFT:
+		LOG("Left click release.");
+		break;
+	case MOUSE_CLICK_RIGHT:
+		LOG("Right click on mouse.");
+		break;
+	case MOUSE_LEAVE_RIGHT:
+		LOG("Right click release.");
+		break;
+	default:
+		break;
+	}
 }

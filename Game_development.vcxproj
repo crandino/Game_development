@@ -89,6 +89,7 @@
     <ClCompile Include="Motor2D\Scene.cpp" />
     <ClCompile Include="Motor2D\Textures.cpp" />
     <ClCompile Include="Motor2D\Timer.cpp" />
+    <ClCompile Include="Motor2D\UIelements.cpp" />
     <ClCompile Include="Motor2D\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +115,7 @@
     <ClInclude Include="Motor2D\Scene.h" />
     <ClInclude Include="Motor2D\Textures.h" />
     <ClInclude Include="Motor2D\Timer.h" />
+    <ClInclude Include="Motor2D\UIelements.h" />
     <ClInclude Include="Motor2D\Window.h" />
   </ItemGroup>
   <ItemGroup>

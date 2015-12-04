@@ -2,6 +2,7 @@
 #define __INPUT_H__
 
 #include "Module.h"
+#include "Point2d.h"
 
 //#define NUM_KEYS 352
 #define NUM_MOUSE_BUTTONS 5
@@ -65,8 +66,8 @@ public:
 	bool getWindowEvent(int code);
 
 	// Get mouse / axis position
-	void getMousePosition(int &x, int &y);
-	void getMouseMotion(int& x, int& y);
+	iPoint getMousePosition();
+	iPoint getMouseMotion();
 
 private:
 	bool		windowEvents[WE_COUNT];

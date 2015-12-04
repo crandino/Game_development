@@ -32,6 +32,8 @@ public:
 	// Called before quitting
 	bool cleanUp();
 
+	void Scene::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger);
+
 private:
 
 	float player_x;

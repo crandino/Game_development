@@ -10,6 +10,8 @@
 #include "PugiXml\src\pugixml.hpp"
 
 class App;
+enum MOUSE_EVENTS;
+class UIelement;
 
 class Module
 {
@@ -71,6 +73,11 @@ public:
 	virtual bool save(pugi::xml_node&) const 
 	{
 		return true;
+	}
+
+	// Can be bool, think about it!
+	virtual void onGui(MOUSE_EVENTS eve, UIelement *trigger)
+	{
 	}
 
 public:

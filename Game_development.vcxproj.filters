@@ -24,6 +24,9 @@
     <Filter Include="Tools\PugiXML">
       <UniqueIdentifier>{f96e9462-e5f8-4012-97ef-26f85c61f526}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\UI Elements">
+      <UniqueIdentifier>{1fd6beb8-5eab-4bc4-ba6f-23b2a011daf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Motor2D\Audio.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Motor2D\Gui.cpp">
       <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Motor2D\UIelements.cpp">
+      <Filter>Modules\UI Elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="Motor2D\Gui.h">
       <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Motor2D\UIelements.h">
+      <Filter>Modules\UI Elements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
