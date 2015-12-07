@@ -13,8 +13,6 @@ class UIinputBox;
 class UIelement;
 struct _TTF_Font;
 
-#define CURSOR_WIDTH 2
-
 enum MOUSE_EVENTS
 {
 	MOUSE_ENTER,

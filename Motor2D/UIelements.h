@@ -101,6 +101,8 @@ public:
 	void setClickedState();
 };
 
+#define CURSOR_WIDTH 2
+
 class UIinputBox : public UIelement
 {
 
@@ -108,7 +110,9 @@ public:
 	UIimage			frame;
 	UIlabel			text;
 	iPoint			offset;
+	int				cursor_height;
 	int				cursor_width;
+	bool			active;
 
 	UIinputBox();
 	~UIinputBox();
@@ -117,7 +121,6 @@ public:
 		_TTF_Font *font, Module *module, UIelement *parent);
 	bool draw();
 	bool preUpdate();
-	void setCursor();
 };
 
 #endif //__UIELEMENTS__

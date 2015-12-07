@@ -14,6 +14,7 @@ Input::Input() : Module()
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
 	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
+
 }
 
 // Destructor
@@ -158,4 +159,17 @@ iPoint Input::getMouseMotion()
 	return iPoint(mouse_motion_x, mouse_motion_y);
 	/*x = mouse_motion_x;
 	y = mouse_motion_y;*/
+}
+
+// Input text methods for GUI
+void Input::startTextInput()
+{
+	if (!SDL_IsTextInputActive())
+		SDL_StartTextInput();
+}
+
+void Input::stopTextInput()
+{
+	if (SDL_IsTextInputActive())
+		SDL_StopTextInput();
 }

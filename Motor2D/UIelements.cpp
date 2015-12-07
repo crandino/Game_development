@@ -220,22 +220,23 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 	offset = text_offset;
 	dragable = false;
 	interactable = true;
+	active = false;
 	type = UI_INPUTBOX;
 	setDimensions(frame_section.w, frame_section.h);
+
+	// Cursor
+	cursor_width = CURSOR_WIDTH;
+	int dummy;
+	app->fonts->calcSize("X", dummy, cursor_height, font);
 }
 
 // Draw:
 bool UIinputBox::draw()
 {
 	iPoint p = getScreenPos();
-	app->render->blit(frame.image.img, p.x, p.y, &frame.image.section);
-	app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);
+	app->render->blit(frame.image.img, p.x, p.y, &frame.image.section);		//Frame
+	app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);   //Label
+	if (active)
+		app->render->DrawQuad({ p.x + offset.x, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255); // Cursor
 	return true;
-}
-
-// SetCursor:
-void UIinputBox::setCursor()
-{
-	int dummy;
-	app->fonts->calcSize("X", cursor_width, dummy, text.font);
 }

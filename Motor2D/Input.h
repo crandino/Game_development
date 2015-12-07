@@ -70,6 +70,7 @@ public:
 	iPoint getMouseMotion();
 
 private:
+
 	bool		windowEvents[WE_COUNT];
 	KeyState	*keyboard;
 	KeyState	mouse_buttons[NUM_MOUSE_BUTTONS];
@@ -77,6 +78,13 @@ private:
 	int			mouse_motion_y;
 	int			mouse_x;
 	int			mouse_y;
+
+
+	// TextInput for GUI
+	public:
+
+	void startTextInput();
+	void stopTextInput();
 };
 
 #endif // __INPUT_H__

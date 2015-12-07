@@ -207,6 +207,26 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 		}
 		break;
 	}
+
+	case UI_INPUTBOX:
+	{
+		UIinputBox *i = (UIinputBox*)trigger;
+		switch (mouse_event)
+		{
+		case MOUSE_ENTER:
+			focus = i;
+			break;
+		case MOUSE_LEAVE:
+			break;
+		case MOUSE_CLICK_LEFT:
+			i->active = true;
+			break;
+		case MOUSE_REPEAT_LEFT:
+			i->dragElement();
+			break;
+		}
+		break;
+	}
 	}
 }
 
@@ -217,7 +237,7 @@ UIelement *Gui::whichUIelemOnMouse() const
 	doubleNode<UIelement*> *u = UIelement_list.getLast();
 	while (u != NULL)
 	{
-		if (u->data->isMouseIn(p) && u->data->dragable)
+		if (u->data->isMouseIn(p) && u->data->interactable)
 			return u->data;
 		u = u->previous;
 	}
