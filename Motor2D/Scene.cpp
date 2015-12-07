@@ -55,20 +55,20 @@ bool Scene::start()
 	// Common font
 	_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 16);
 	// Main Window and title
-	SDL_Rect win_rect = { 0, 512, 483, 512 };
+	SDL_Rect win_rect = {32, 542, 420, 452 };
 	const UIimage *w = app->gui->createImage({ 300, 100 }, NULL, win_rect, this);
-	app->gui->createLabel({ 200, 60 }, "Window Title", UIfont, this, (UIelement*)w);
+	app->gui->createLabel({ 155, 50 }, "Window Title", UIfont, this, (UIelement*)w);
 
 	// Button and label of the button
-	SDL_Rect idle_section = { 642, 169, 229, 69 };
-	SDL_Rect hover_section = { 0, 113, 229, 69 };
-	SDL_Rect clicked_section = { 411, 169, 229, 69 };
+	SDL_Rect idle_section = { 648, 173, 218, 57 };
+	SDL_Rect hover_section = { 6, 117, 218, 57 };
+	SDL_Rect clicked_section = { 417, 173, 218, 57 };
 	const UIbutton *b = app->gui->createButton({ 120, 300 }, NULL, idle_section, NULL, hover_section, NULL, clicked_section, this, (UIelement*)w);
-	app->gui->createLabel({ 50, 25 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
+	app->gui->createLabel({ 20, 15 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
 
 	// Inputbox
-	SDL_Rect frame_section = { 455, 569, 344, 61 };
-	app->gui->createInputBox({ 50, 100 }, { 10, 10 }, NULL, frame_section, "Put text here!", UIfont, this, (UIelement*)w);
+	SDL_Rect frame_section = { 495, 573, 332, 52 };
+	app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here!", UIfont, this, (UIelement*)w);
 	return true;
 }
 
