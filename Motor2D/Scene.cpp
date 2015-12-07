@@ -65,9 +65,10 @@ bool Scene::start()
 	SDL_Rect clicked_section = { 411, 169, 229, 69 };
 	const UIbutton *b = app->gui->createButton({ 120, 300 }, NULL, idle_section, NULL, hover_section, NULL, clicked_section, this, (UIelement*)w);
 	app->gui->createLabel({ 50, 25 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
-	//app->gui->createInputBox("Your name", NULL, { 455, 569, 344, 61 }, { 50, 10, 320, 50 }, { 40, 220 }, this, (UIelement*)w);
-	
-	//app->gui->createImage(NULL, { 50, 70 }, SDL_Rect{ 485, 829, 328, 103 }, this);
+
+	// Inputbox
+	SDL_Rect frame_section = { 455, 569, 344, 61 };
+	app->gui->createInputBox({ 50, 100 }, { 10, 10 }, NULL, frame_section, "Put text here!", UIfont, this, (UIelement*)w);
 	return true;
 }
 

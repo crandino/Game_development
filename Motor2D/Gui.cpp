@@ -35,7 +35,7 @@ bool Gui::start()
 {
 	atlas = app->tex->loadTexture(atlas_file_name.GetString());
 	SDL_Rect screen_rect = { 0, 0, 800, 600 };
-	screen = new UIimage({ 0, 0 }, NULL, screen_rect, NULL, NULL);
+	screen = new UIelement();
 	screen->interactable = false;
 	screen->dragable = true;
 	focus = screen;
@@ -126,14 +126,16 @@ const SDL_Texture* Gui::getAtlas() const
 // Factories for class Gui ---------------------------------------------------
 const UIlabel* Gui::createLabel(iPoint p, const char *string, _TTF_Font *font, Module *mod, UIelement *parent)
 {
-	UIlabel *l = new UIlabel(p, NULL, string, font, mod, parent);
+	UIlabel *l = new UIlabel();
+	l->init(p, string, font, mod, parent);
 	UIelement_list.add(l);
 	return l;
 }
 
 const UIimage* Gui::createImage(iPoint p, SDL_Texture *tex, SDL_Rect &section, Module *mod, UIelement *parent)
 {
-	UIimage *i = new UIimage(p, tex, section, mod, parent);
+	UIimage *i = new UIimage();
+	i->init(p, tex, section, mod, parent);
 	UIelement_list.add(i);
 	return i;
 }
@@ -142,29 +144,21 @@ const UIbutton *Gui::createButton(iPoint p, SDL_Texture *tex_idle, SDL_Rect& sec
 								  SDL_Rect& section_hover, SDL_Texture *tex_clicked, SDL_Rect& section_clicked,
 								  Module *mod, UIelement *parent)
 {
-	UIbutton *b = new UIbutton(p,tex_idle, section_idle, tex_hover, section_hover, tex_clicked, section_clicked, mod, parent );
+	UIbutton *b = new UIbutton();
+	b->init(p, tex_idle, section_idle, tex_hover, section_hover, tex_clicked, section_clicked, mod, parent);
 	UIelement_list.add(b);
+
 	return b;	
 }
 
-//const UIinputBox *Gui::createInputBox(const char *string, SDL_Texture *frame_tex, SDL_Rect frame_rect,
-//									  SDL_Rect write_section, iPoint pos, Module *mod, UIelement *parent)
-//{
-//	UIinputBox *i = new UIinputBox(mod);
-//	i->parent = parent != NULL ? parent : screen;
-//
-//	i->frame.img = frame_tex != NULL ? frame_tex : (SDL_Texture*)app->gui->getAtlas();
-//	i->setLocalPos(pos);
-//	i->width = frame_rect.w;
-//	i->height = frame_rect.h;
-//	i->frame.draw_area = frame_rect;
-//	i->write_section = write_section;
-//	i->text = string;
-//	i->text_image = app->fonts->print(string);
-//	//SDL_QueryTexture(l->text_image, NULL, NULL, &l->width, &l->height);
-//	UIelement_list.add(i);
-//	return i;
-//}
+const UIinputBox *Gui::createInputBox(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
+									  _TTF_Font *font, Module *module, UIelement *parent)
+{
+	UIinputBox *i = new UIinputBox();
+	i->init(pos, text_offset, frame_tex, frame_section, initial_text, font, module, parent);
+	UIelement_list.add(i);
+	return i;
+}
 
 void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 {

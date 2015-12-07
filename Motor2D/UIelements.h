@@ -20,16 +20,17 @@ private:
 	
 	iPoint					pos;
 	int 					width, height;
-	const UIelement*		parent;
+	
 
 public:
 
+	const UIelement*		parent;
 	bool					dragable;
 	bool					interactable;
 	UI_TYPE					type;
 	DList<Module*>			mod_listeners;		// Module listener
 
-	UIelement(iPoint pos, Module *module, UIelement *parent);
+	UIelement() {};
 	~UIelement() {};
 
 	virtual bool draw() { return true; }
@@ -49,52 +50,49 @@ public:
 
 class UIlabel : public UIelement
 {
-
-private:
-	
-	const char		*text;
-	StateImage		text_tex;
-	// FONT, added please!!!
-	_TTF_Font		*font;
-
 public:
 
-	UIlabel(iPoint pos, SDL_Texture *tex, const char *string, _TTF_Font *font, Module *module, UIelement *parent);
+	const char		*text;
+	StateImage		text_tex;
+	_TTF_Font		*font;
+
+	UIlabel();
 	~UIlabel();
 
-	bool draw();
+	void init(iPoint pos, const char *string, _TTF_Font *f, Module *module, UIelement *parent);
+	bool draw();	
 };
 
 class UIimage : public UIelement
 {
 	
-private:
+public:
 
 	StateImage		image;
 
-public:
-
-	UIimage(iPoint pos, SDL_Texture *tex, SDL_Rect &section, Module *module, UIelement *parent);
+	UIimage();
 	~UIimage();
 
+	void init(iPoint pos, SDL_Texture *tex, SDL_Rect &section, Module *module, UIelement *parent);
 	bool draw();
+	
 };
 
 class UIbutton : public UIelement
 {
-private:
+
+public:
 
 	StateImage		idle;
 	StateImage		hover;
 	StateImage		clicked;
+	StateImage      *current_state;
 
-public:
-
-	StateImage *current_state;
-
-	UIbutton(iPoint pos, SDL_Texture *tex_idle, SDL_Rect &section_idle, SDL_Texture *tex_hover, SDL_Rect &section_hover, SDL_Texture *tex_clicked, SDL_Rect &section_clicked, Module *module, UIelement *parent);
+	UIbutton();
 	~UIbutton();
 
+	void init(iPoint pos, SDL_Texture *tex_idle, SDL_Rect &section_idle, SDL_Texture *tex_hover, SDL_Rect &section_hover,
+		SDL_Texture *tex_clicked, SDL_Rect &section_clicked, Module *module, UIelement *parent);
 	bool draw();
 	bool preUpdate();
 
@@ -103,20 +101,23 @@ public:
 	void setClickedState();
 };
 
-//class UIinputBox : public UIelement
-//{
-//public:
-//
-//	StateImage		frame;
-//	const char		*text;
-//	SDL_Texture		*text_image;
-//	SDL_Rect		write_section;
-//
-//	UIinputBox(Module *mod);
-//	~UIinputBox();
-//
-//	bool draw();
-//	bool preUpdate();
-//};
+class UIinputBox : public UIelement
+{
+
+public:
+	UIimage			frame;
+	UIlabel			text;
+	iPoint			offset;
+	int				cursor_width;
+
+	UIinputBox();
+	~UIinputBox();
+
+	void init(iPoint pos,iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
+		_TTF_Font *font, Module *module, UIelement *parent);
+	bool draw();
+	bool preUpdate();
+	void setCursor();
+};
 
 #endif //__UIELEMENTS__

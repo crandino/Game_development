@@ -73,9 +73,9 @@ public:
 	const UIimage *createImage(iPoint p, SDL_Texture *tex, SDL_Rect &section, Module *mod = NULL, UIelement *parent = NULL);
 	const UIbutton *Gui::createButton(iPoint p, SDL_Texture *tex_idle, SDL_Rect& section_idle, SDL_Texture *tex_hover,
 									  SDL_Rect& section_hover, SDL_Texture *tex_clicked, SDL_Rect& section_clicked,
-									  Module *mod, UIelement *parent);
-	const UIinputBox* createInputBox(const char *string, SDL_Texture *frame_tex, SDL_Rect frame_rect, 
-									 SDL_Rect write_section, iPoint pos, Module *mod, UIelement *parent = NULL);
+									  Module *mod = NULL, UIelement *parent = NULL);
+	const UIinputBox *Gui::createInputBox(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
+									      _TTF_Font *font, Module *module = NULL, UIelement *parent = NULL);
 
 	const SDL_Texture* getAtlas() const;
 	
