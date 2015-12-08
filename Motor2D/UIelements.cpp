@@ -75,7 +75,7 @@ void UIelement::drawDebug()
 void UIelement::dragElement()
 {
 	iPoint p = app->input->getMouseMotion();
-	pos += p;
+	setLocalPos(pos + p);
 }
 
 // ---- UI Label -----
@@ -96,8 +96,8 @@ void UIlabel::init(iPoint pos, const char *string, _TTF_Font *f, Module *module,
 	addListener(app->gui);
 	addListener(module);
 
-	dragable = false;
 	interactable = false;
+	is_inside = false;
 	type = UI_LABEL;
 	text = string;
 	font = f != NULL ? f : app->fonts->default;
@@ -114,6 +114,13 @@ bool UIlabel::draw()
 	iPoint p = getScreenPos();
 	app->render->blit(text_tex.img, p.x, p.y, &text_tex.section);
 	return true;
+}
+
+void UIlabel::setText(const char *t)
+{
+	text = t;
+	SDL_DestroyTexture(text_tex.img);
+	text_tex.img = app->fonts->print(text, { 255, 255, 255, 255 }, font);
 }
 
 // ----- UIimage -----
@@ -134,8 +141,8 @@ void UIimage::init(iPoint pos, SDL_Texture *tex, SDL_Rect &section, Module *modu
 	addListener(app->gui);
 	addListener(module);
 
-	dragable = true;
-	interactable = false;
+	interactable = true;
+	is_inside = false;
 	type = UI_IMAGE;
 	image.img = tex != NULL ? tex : (SDL_Texture*)app->gui->getAtlas();
 	image.section = section;
@@ -169,8 +176,8 @@ void UIbutton::init(iPoint pos, SDL_Texture *tex_idle, SDL_Rect &section_idle, S
 	addListener(app->gui);
 	addListener(module);
 
-	dragable = true;
 	interactable = true;
+	is_inside = false;
 	type = UI_BUTTON;
 	idle.img = tex_idle != NULL ? tex_idle : (SDL_Texture*)app->gui->getAtlas();
 	hover.img = tex_hover != NULL ? tex_hover : (SDL_Texture*)app->gui->getAtlas();
@@ -218,8 +225,8 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 	frame.init(pos, frame_tex, frame_section,module, this);
 	text.init(pos + text_offset, initial_text, font, module, this);
 	offset = text_offset;
-	dragable = false;
 	interactable = true;
+	is_inside = false;
 	active = false;
 	type = UI_INPUTBOX;
 	setDimensions(frame_section.w, frame_section.h);
@@ -234,9 +241,15 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 bool UIinputBox::draw()
 {
 	iPoint p = getScreenPos();
-	app->render->blit(frame.image.img, p.x, p.y, &frame.image.section);		//Frame
-	app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);   //Label
-	if (active)
-		app->render->DrawQuad({ p.x + offset.x, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255); // Cursor
+	app->render->blit(frame.image.img, p.x, p.y, &frame.image.section);	
+	if(strcmp(text.text ,"") != 0)		// Frame
+		app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);		
+	if(active)							// Label
+	app->render->DrawQuad({ p.x + offset.x, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   // Cursor
 	return true;
+}
+
+void UIinputBox::sendUIinputBox()
+{
+	app->input->input_box = this;
 }

@@ -81,6 +81,8 @@ public:
 private:	
 
 	UIelement				*focus;
+	UIelement				*current_UIelement;
+	UIelement				*previous_UIelement;
 
 	DList<UIelement*>		UIelement_list;
 	SDL_Texture*			atlas;

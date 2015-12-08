@@ -34,11 +34,11 @@ bool Gui::awake(pugi::xml_node& conf)
 bool Gui::start()
 {
 	atlas = app->tex->loadTexture(atlas_file_name.GetString());
-	SDL_Rect screen_rect = { 0, 0, 800, 600 };
+	//SDL_Rect screen_rect = { 0, 0, 800, 600 };
 	screen = new UIelement();
 	screen->interactable = false;
-	screen->dragable = true;
 	focus = screen;
+	previous_UIelement = screen;
 	return true;
 }
 
@@ -46,36 +46,46 @@ bool Gui::start()
 bool Gui::preUpdate()
 {
 	iPoint p = app->input->getMousePosition();
-	UIelement *u = whichUIelemOnMouse();
+	current_UIelement = whichUIelemOnMouse();
 
-	doubleNode<Module*> *listener = u->mod_listeners.getLast();
+	doubleNode<Module*> *listener = current_UIelement->mod_listeners.getLast();
 	while (listener != NULL)
 	{
-		if (u != focus)
-		{
-			listener->data->onGui(MOUSE_LEAVE, focus);
-			listener->data->onGui(MOUSE_ENTER, u);
-		}	
-				
-		if (u->dragable && app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT)
-			listener->data->onGui(MOUSE_REPEAT_LEFT, u);
 
-		if (u->interactable)
+		if (current_UIelement != previous_UIelement)
+			listener->data->onGui(MOUSE_LEAVE, previous_UIelement);
+
+		if (current_UIelement->interactable)
 		{
+			if (!current_UIelement->is_inside && current_UIelement->isMouseIn(p))
+				listener->data->onGui(MOUSE_ENTER, current_UIelement);
+
+			if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT)
+				listener->data->onGui(MOUSE_REPEAT_LEFT, current_UIelement);
+
 			// Behaviour for left mouse button
 			if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
-				listener->data->onGui(MOUSE_CLICK_LEFT, u);
+				listener->data->onGui(MOUSE_CLICK_LEFT, current_UIelement);
 			else if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP)
-				listener->data->onGui(MOUSE_LEAVE_LEFT, u);
+				listener->data->onGui(MOUSE_LEAVE_LEFT, current_UIelement);
 
 			// Behaviour for right mouse button
 			if (app->input->getMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_DOWN)
-				listener->data->onGui(MOUSE_CLICK_RIGHT, u);
+				listener->data->onGui(MOUSE_CLICK_RIGHT, current_UIelement);
 			else if (app->input->getMouseButtonDown(SDL_BUTTON_RIGHT) == KEY_UP)
-				listener->data->onGui(MOUSE_LEAVE_RIGHT, u);
+				listener->data->onGui(MOUSE_LEAVE_RIGHT, current_UIelement);
 		}
 		listener = listener->previous;
 	}
+
+	//if (focus->type == UI_INPUTBOX)
+	//{
+	//	UIinputBox *b = (UIinputBox*)focus;
+	//	if (b->active)
+	//		b->checkInput();
+	//}	
+
+	previous_UIelement = current_UIelement;
 
 	return true;
 }
@@ -171,14 +181,20 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 		{
 		case MOUSE_ENTER:
 			b->setHoverState();
-			focus = b;
+			b->is_inside = true;	
 			break;
 		case MOUSE_LEAVE:
 			b->setIdleState();
+			b->is_inside = false;
 			break;
 		case MOUSE_CLICK_LEFT:
 		case MOUSE_CLICK_RIGHT:
 			b->setClickedState();
+			if (focus != trigger)
+			{
+				focus = trigger;
+				app->input->stopTextInput();
+			}
 			break;
 		case MOUSE_REPEAT_LEFT:
 			b->dragElement();
@@ -197,7 +213,6 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 		switch (mouse_event)
 		{
 		case MOUSE_ENTER:
-			focus = i;
 			break;
 		case MOUSE_LEAVE:
 			break;
@@ -214,12 +229,17 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 		switch (mouse_event)
 		{
 		case MOUSE_ENTER:
-			focus = i;
 			break;
 		case MOUSE_LEAVE:
 			break;
 		case MOUSE_CLICK_LEFT:
-			i->active = true;
+			if (focus != trigger)
+			{
+				focus = trigger;
+				app->input->startTextInput();
+				i->sendUIinputBox();
+				i->active = true;				
+			}
 			break;
 		case MOUSE_REPEAT_LEFT:
 			i->dragElement();

@@ -2,6 +2,7 @@
 #define __UIELEMENTS__
 
 #include "DList.h"
+#include "Gui.h"
 
 struct StateImage
 {
@@ -25,8 +26,8 @@ private:
 public:
 
 	const UIelement*		parent;
-	bool					dragable;
 	bool					interactable;
+	bool					is_inside;
 	UI_TYPE					type;
 	DList<Module*>			mod_listeners;		// Module listener
 
@@ -60,7 +61,8 @@ public:
 	~UIlabel();
 
 	void init(iPoint pos, const char *string, _TTF_Font *f, Module *module, UIelement *parent);
-	bool draw();	
+	bool draw();
+	void setText(const char *t);
 };
 
 class UIimage : public UIelement
@@ -121,6 +123,7 @@ public:
 		_TTF_Font *font, Module *module, UIelement *parent);
 	bool draw();
 	bool preUpdate();
+	void sendUIinputBox();
 };
 
 #endif //__UIELEMENTS__

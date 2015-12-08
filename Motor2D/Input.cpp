@@ -3,6 +3,7 @@
 #include "App.h"
 #include "Input.h"
 #include "Window.h"
+#include "UIelements.h"
 #include "SDL/include/SDL.h"
 
 #define MAX_KEYS 300
@@ -14,6 +15,8 @@ Input::Input() : Module()
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
 	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
+
+	input_box = NULL;
 
 }
 
@@ -51,8 +54,12 @@ bool Input::preUpdate()
 {
 	static SDL_Event event;
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
-
 	mouse_motion_x = mouse_motion_y = 0;
+
+	char *t = "";
+	if( input_box != NULL )
+		t = (char*)input_box->text.text;
+	bool UI_text_changed = false;	
 
 	for (int i = 0; i < MAX_KEYS; i++)
 	{
@@ -119,6 +126,12 @@ bool Input::preUpdate()
 			//LOG("Mouse button %d up", event.button.button-1);
 			break;
 
+		case SDL_TEXTINPUT:
+			/* Add new text onto the end of our text */
+			strcat_s(t, strnlen_s(t, 30), event.text.text);
+			UI_text_changed = true;
+			break;
+
 		case SDL_MOUSEMOTION:
 			int scale = app->win->getScale();
 			mouse_motion_x = event.motion.xrel / scale;
@@ -126,9 +139,12 @@ bool Input::preUpdate()
 			mouse_x = event.motion.x / scale;
 			mouse_y = event.motion.y / scale;
 			//LOG("Mouse motion x %d y %d", mouse_motion_x, mouse_motion_y);
-			break;
+			break;		
 		}
 	}
+
+	if (UI_text_changed)
+		input_box->text.setText(t);
 
 	return true;
 }

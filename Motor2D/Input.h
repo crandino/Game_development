@@ -9,6 +9,7 @@
 //#define LAST_KEYS_PRESSED_BUFFER 50
 
 struct SDL_Rect;
+class UIinputBox;
 
 enum EventWindow
 {
@@ -30,6 +31,8 @@ class Input : public Module
 {
 
 public:
+
+	UIinputBox  *input_box;
 
 	Input();
 
