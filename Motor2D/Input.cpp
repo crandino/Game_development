@@ -56,9 +56,10 @@ bool Input::preUpdate()
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	mouse_motion_x = mouse_motion_y = 0;
 
-	char *t = "";
+	char t[MAX_STRING_UI];
+	t[0] = '\0';
 	if( input_box != NULL )
-		t = (char*)input_box->text.text;
+		strcpy_s(t,input_box->text.text);
 	bool UI_text_changed = false;	
 
 	for (int i = 0; i < MAX_KEYS; i++)
@@ -128,7 +129,7 @@ bool Input::preUpdate()
 
 		case SDL_TEXTINPUT:
 			/* Add new text onto the end of our text */
-			strcat_s(t, strnlen_s(t, 30), event.text.text);
+			strcat_s(t, MAX_STRING_UI, event.text.text);
 			UI_text_changed = true;
 			break;
 
@@ -144,7 +145,11 @@ bool Input::preUpdate()
 	}
 
 	if (UI_text_changed)
+	{
 		input_box->text.setText(t);
+		input_box->moveCursor();
+	}
+		
 
 	return true;
 }

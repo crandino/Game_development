@@ -99,7 +99,8 @@ void UIlabel::init(iPoint pos, const char *string, _TTF_Font *f, Module *module,
 	interactable = false;
 	is_inside = false;
 	type = UI_LABEL;
-	text = string;
+	strcpy_s(text, string);
+	//text = string;
 	font = f != NULL ? f : app->fonts->default;
 	SDL_Color white = { 255, 255, 255, 255 };
 	text_tex.img = app->fonts->print(text, white, font);
@@ -118,7 +119,7 @@ bool UIlabel::draw()
 
 void UIlabel::setText(const char *t)
 {
-	text = t;
+	strcpy_s(text, t);
 	SDL_DestroyTexture(text_tex.img);
 	text_tex.img = app->fonts->print(text, { 255, 255, 255, 255 }, font);
 }
@@ -225,6 +226,7 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 	frame.init(pos, frame_tex, frame_section,module, this);
 	text.init(pos + text_offset, initial_text, font, module, this);
 	offset = text_offset;
+	cursor_pos.setZero();
 	interactable = true;
 	is_inside = false;
 	active = false;
@@ -245,11 +247,18 @@ bool UIinputBox::draw()
 	if(strcmp(text.text ,"") != 0)		// Frame
 		app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);		
 	if(active)							// Label
-	app->render->DrawQuad({ p.x + offset.x, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   // Cursor
+	app->render->DrawQuad({ p.x + offset.x + cursor_pos.x, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   // Cursor
 	return true;
 }
 
 void UIinputBox::sendUIinputBox()
 {
 	app->input->input_box = this;
+}
+
+void UIinputBox::moveCursor()
+{
+	int tex_width, dummy;
+	app->fonts->calcSize(text.text, tex_width, dummy, text.font);
+	cursor_pos.x = tex_width;
 }

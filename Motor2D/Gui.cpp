@@ -238,6 +238,7 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 				focus = trigger;
 				app->input->startTextInput();
 				i->sendUIinputBox();
+				i->text.setText("");
 				i->active = true;				
 			}
 			break;

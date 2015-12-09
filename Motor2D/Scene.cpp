@@ -68,7 +68,7 @@ bool Scene::start()
 
 	// Inputbox
 	SDL_Rect frame_section = { 495, 573, 332, 52 };
-	app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here!", UIfont, this, (UIelement*)w);
+	app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
 	return true;
 }
 

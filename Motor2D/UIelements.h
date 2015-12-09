@@ -4,6 +4,8 @@
 #include "DList.h"
 #include "Gui.h"
 
+#define MAX_STRING_UI 150
+
 struct StateImage
 {
 	SDL_Texture		*img;
@@ -53,7 +55,7 @@ class UIlabel : public UIelement
 {
 public:
 
-	const char		*text;
+	char			text[MAX_STRING_UI];
 	StateImage		text_tex;
 	_TTF_Font		*font;
 
@@ -112,6 +114,7 @@ public:
 	UIimage			frame;
 	UIlabel			text;
 	iPoint			offset;
+	iPoint			cursor_pos;
 	int				cursor_height;
 	int				cursor_width;
 	bool			active;
@@ -124,6 +127,7 @@ public:
 	bool draw();
 	bool preUpdate();
 	void sendUIinputBox();
+	void moveCursor();
 };
 
 #endif //__UIELEMENTS__
