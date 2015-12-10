@@ -87,8 +87,10 @@ bool Gui::preUpdate()
 		listener = listener->previous;
 	}
 
+	for (doubleNode<UIelement*> *item = UIelement_list.getFirst(); item != NULL; item = item->next)
+		item->data->preUpdate();
+	
 	previous_UIelement = current_UIelement;
-
 	return true;
 }
 
@@ -234,13 +236,13 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 				focus = trigger;
 				app->input->startTextInput(i);
 
-				if (!i->active)
-				{
+				if (!i->active && strcmp(i->text.text.GetString(), i->default_string) == 0)
 					i->text.setText("");
-					i->moveCursor();
-				}
 				i->active = true;
 			}
+			break;
+		case LOST_FOCUS:
+				i->active = false;
 			break;
 		case MOUSE_REPEAT_LEFT:
 			i->dragElement();

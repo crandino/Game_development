@@ -101,13 +101,13 @@ void UIlabel::init(iPoint pos, const char *string, _TTF_Font *f, Module *module,
 	interactable = false;
 	is_inside = false;
 	type = UI_LABEL;
-	strcpy_s(text, string);
+	text.create(string);
 	font = f != NULL ? f : app->fonts->default;
 	SDL_Color white = { 255, 255, 255, 255 };
-	text_tex.img = app->fonts->print(text, white, font);
+	text_tex.img = app->fonts->print(text.GetString(), white, font);
 	text_tex.section.x = 0;
 	text_tex.section.y = 0;
-	app->fonts->calcSize(text, text_tex.section.w, text_tex.section.h, font);
+	app->fonts->calcSize(text.GetString(), text_tex.section.w, text_tex.section.h, font);
 	setDimensions(text_tex.section.w, text_tex.section.h);
 }
 // Draw:
@@ -120,9 +120,9 @@ bool UIlabel::draw()
 
 void UIlabel::setText(const char *t)
 {
-	strcpy_s(text, t);
+	text.create(t);
 	SDL_DestroyTexture(text_tex.img);
-	text_tex.img = app->fonts->print(text, { 255, 255, 255, 255 }, font);
+	text_tex.img = app->fonts->print(text.GetString(), { 255, 255, 255, 255 }, font);
 }
 
 // ----- UIimage -----
@@ -241,7 +241,9 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 	frame.init({ 0, 0 }, frame_tex, frame_section, module, this);
 	text.init(text_offset, initial_text, font, module, this);
 	offset = text_offset;
+	default_string = initial_text;
 	cursor_pos = 0;
+	cursor_index = 0;
 	interactable = true;
 	is_inside = false;
 	active = false;
@@ -262,7 +264,7 @@ bool UIinputBox::draw()
 	// Frame
 	app->render->blit(frame.image.img, p.x, p.y, &frame.image.section);	
 	// Label
-	if(strcmp(text.text ,"") != 0)		
+	if(strcmp(text.text.GetString() ,"") != 0)		
 		app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);	
 	// Cursor
 	if(active)							
@@ -270,11 +272,45 @@ bool UIinputBox::draw()
 	return true;
 }
 
+// preUpdate:
+bool UIinputBox::preUpdate()
+{
+	if (active)
+	{
+		uint length_string = text.text.Length();
+		if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+		{
+			if(cursor_index > 0) cursor_index--;
+			moveCursor();
+		}
+		if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+		{
+			if (cursor_index < length_string) cursor_index++;
+			moveCursor();
+		}
+	}
+
+	return true;
+}
+
 void UIinputBox::moveCursor()
 {
-	int tex_width, dummy;
-	app->fonts->calcSize(text.text, tex_width, dummy, text.font);
-	cursor_pos = tex_width;
+	
+	if (cursor_index == 0)
+		cursor_pos = 0;
+	else
+	{
+		const char *t = text.text.GetString();
+		char c[MAX_STRING_UI + 1 ];
+		memset(c, '\0', MAX_STRING_UI + 1);
+
+		for (int i = 0; i < cursor_index; i++)
+			c[i] = t[i];
+
+		int dummy;
+		app->fonts->calcSize(c, cursor_pos, dummy, text.font);
+			
+	}
 }
 
 void UIinputBox::drawDebug()

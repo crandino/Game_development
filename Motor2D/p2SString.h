@@ -209,6 +209,12 @@ public:
 		return(*this);
 	}
 
+	char *operator[] (unsigned int index) const
+	{
+		assert(index < size);
+		return &str[index];
+	}
+
 	// Utils
 	unsigned int Length() const
 	{

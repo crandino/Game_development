@@ -11,6 +11,7 @@
 #include "Window.h"
 #include "Scene.h"
 #include "Maps.h"
+#include "UIelements.h"
 
 #define FRAME_LOGIC 60
 #define MS_PER_LOGIC_FRAME 1000.0f/FRAME_LOGIC
@@ -18,6 +19,7 @@
 Scene::Scene() : Module()
 {
 	name.create("scene");
+	move_locked = false;
 }
 
 // Destructor
@@ -70,6 +72,9 @@ bool Scene::start()
 	SDL_Rect frame_section = { 495, 573, 332, 52 };
 	app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
 
+	// Inputbox
+	app->gui->createInputBox({ 50, 150 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
+
 	return true;
 }
 
@@ -84,23 +89,26 @@ bool Scene::update(float dt)
 {
 	float cam_speed = ceil(25.0f * (dt/MS_PER_LOGIC_FRAME));
 
-	if (app->input->getKey(SDL_SCANCODE_L) == KEY_DOWN)
+	/*if (app->input->getKey(SDL_SCANCODE_L) == KEY_DOWN)
 		app->loadGame("save_game.xml");
 
 	if (app->input->getKey(SDL_SCANCODE_K) == KEY_DOWN)
-		app->saveGame("save_game.xml");
+		app->saveGame("save_game.xml");*/
 
-	if (app->input->getKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y += cam_speed;
+	if (!move_locked)
+	{
+		if (app->input->getKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			app->render->camera.y += cam_speed;
 
-	if (app->input->getKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y -= cam_speed;
+		if (app->input->getKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			app->render->camera.y -= cam_speed;
 
-	if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x += cam_speed;
+		if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			app->render->camera.x += cam_speed;
 
-	if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x -= cam_speed;
+		if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			app->render->camera.x -= cam_speed;
+	}
 
 	if (app->input->getKey(SDL_SCANCODE_W) == KEY_DOWN)
 	{
@@ -196,5 +204,21 @@ bool Scene::cleanUp()
 
 void Scene::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 {
-	
+	switch (trigger->type)
+	{
+	case UI_INPUTBOX:
+	{
+		UIinputBox *i = (UIinputBox*)trigger;
+		switch (mouse_event)
+		{
+		case GAIN_FOCUS:
+			move_locked = true;
+			break;
+		case LOST_FOCUS:
+			move_locked = false;
+			break;
+		}
+		break;
+	}
+	}
 }

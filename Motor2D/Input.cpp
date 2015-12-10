@@ -56,10 +56,9 @@ bool Input::preUpdate()
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 	mouse_motion_x = mouse_motion_y = 0;
 
-	char t[MAX_STRING_UI];
-	t[0] = '\0';
-	if( input_box != NULL )
-		strcpy_s(t,input_box->text.text);
+	p2SString t;
+	if( input_box != NULL )	
+		t.create(input_box->text.text.GetString());
 	bool UI_text_changed = false;	
 
 	for (int i = 0; i < MAX_KEYS; i++)
@@ -128,9 +127,13 @@ bool Input::preUpdate()
 			break;
 
 		case SDL_TEXTINPUT:
-			/* Add new text onto the end of our text */
-			strcat_s(t, MAX_STRING_UI, event.text.text);
-			UI_text_changed = true;
+			/* Add new text onto the end of our text */	
+			if (t.Length() < MAX_STRING_UI)
+			{
+				t += event.text.text;
+				UI_text_changed = true;
+				input_box->cursor_index++;
+			}		
 			break;
 
 		case SDL_MOUSEMOTION:
@@ -146,7 +149,7 @@ bool Input::preUpdate()
 
 	if (UI_text_changed)
 	{
-		input_box->text.setText(t);
+		input_box->text.setText(t.GetString());
 		for (doubleNode<Module*> *item = input_box->mod_listeners.getLast(); item != NULL; item = item->previous)
 		{
 			item->data->onGui(TEXT_CHANGED, input_box);
@@ -197,4 +200,5 @@ void Input::stopTextInput()
 {
 	if (SDL_IsTextInputActive())
 		SDL_StopTextInput();
+	input_box = NULL;
 }

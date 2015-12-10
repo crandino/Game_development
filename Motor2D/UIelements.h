@@ -4,7 +4,7 @@
 #include "DList.h"
 #include "Gui.h"
 
-#define MAX_STRING_UI 150
+#define MAX_STRING_UI 10
 
 struct StateImage
 {
@@ -24,7 +24,6 @@ private:
 	iPoint					pos;
 	int 					width, height;
 	
-
 public:
 
 	const UIelement*		parent;
@@ -38,6 +37,7 @@ public:
 	virtual ~UIelement() {}
 
 	virtual bool draw() { return true; }
+	virtual bool preUpdate() { return true; }
 	virtual void drawDebug();
 
 	bool isMouseIn(const iPoint &pos);
@@ -56,7 +56,7 @@ class UIlabel : public UIelement
 {
 public:
 
-	char			text[MAX_STRING_UI];
+	p2SString		text;
 	StateImage		text_tex;
 	_TTF_Font		*font;
 
@@ -99,7 +99,6 @@ public:
 	void init(iPoint pos, SDL_Texture *tex_idle, SDL_Rect &section_idle, SDL_Texture *tex_hover, SDL_Rect &section_hover,
 		SDL_Texture *tex_clicked, SDL_Rect &section_clicked, Module *module, UIelement *parent);
 	bool draw();
-	bool preUpdate();
 
 	void setIdleState();
 	void setHoverState();
@@ -116,9 +115,12 @@ public:
 	UIlabel			text;
 	iPoint			offset;
 	int				cursor_pos;
+	uint			cursor_index;
 	int				cursor_height;
 	int				cursor_width;
+
 	bool			active;
+	const char*		default_string;
 
 	UIinputBox();
 	~UIinputBox();

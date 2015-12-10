@@ -44,6 +44,8 @@ private:
 	iPoint origin;
 	iPoint destination;
 
+	bool move_locked;
+
 };
 
 #endif // __SCENE_H__
