@@ -147,10 +147,12 @@ bool Input::preUpdate()
 	if (UI_text_changed)
 	{
 		input_box->text.setText(t);
-		input_box->moveCursor();
+		for (doubleNode<Module*> *item = input_box->mod_listeners.getLast(); item != NULL; item = item->previous)
+		{
+			item->data->onGui(TEXT_CHANGED, input_box);
+		}
 	}
-		
-
+	
 	return true;
 }
 
@@ -168,9 +170,10 @@ bool Input::getWindowEvent(EventWindow ev)
 	return windowEvents[ev];
 }
 
-iPoint Input::getMousePosition()
+void Input::getMousePosition(iPoint &p) const
 {
-	return iPoint(mouse_x, mouse_y);
+	p.x = mouse_x;
+	p.y = mouse_y;
 	/*y = mouse_y;
 	x = mouse_x;*/
 }
@@ -183,10 +186,11 @@ iPoint Input::getMouseMotion()
 }
 
 // Input text methods for GUI
-void Input::startTextInput()
+void Input::startTextInput(UIinputBox* u)
 {
 	if (!SDL_IsTextInputActive())
 		SDL_StartTextInput();
+	input_box = u;
 }
 
 void Input::stopTextInput()

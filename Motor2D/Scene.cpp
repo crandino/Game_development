@@ -53,7 +53,7 @@ bool Scene::start()
 
 	// ----- UI elements creation -----
 	// Common font
-	_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 16);
+	_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 14);
 	// Main Window and title
 	SDL_Rect win_rect = {32, 542, 420, 452 };
 	const UIimage *w = app->gui->createImage({ 300, 100 }, NULL, win_rect, this);
@@ -132,7 +132,7 @@ bool Scene::update(float dt)
 	iPoint pos;
 	if (app->input->getMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
 	{
-		pos = app->input->getMousePosition();
+		app->input->getMousePosition(pos);
 		if (path_selected == false)
 		{
 			origin = app->render->screenToWorld(pos.x, pos.y);
@@ -161,7 +161,7 @@ bool Scene::update(float dt)
 		app->render->blit(debug_tex, pos.x, pos.y);
 	}
 	
-	pos = app->input->getMousePosition();
+	app->input->getMousePosition(pos);
 	iPoint map_coordinates = app->map->worldToMap(pos.x - app->render->camera.x, pos.y - app->render->camera.y);
 	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d Walkable: %d",
 		app->map->data.width, app->map->data.height,

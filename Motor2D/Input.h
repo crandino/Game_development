@@ -69,7 +69,7 @@ public:
 	bool getWindowEvent(int code);
 
 	// Get mouse / axis position
-	iPoint getMousePosition();
+	void getMousePosition(iPoint &p) const;
 	iPoint getMouseMotion();
 
 private:
@@ -86,7 +86,7 @@ private:
 	// TextInput for GUI
 	public:
 
-	void startTextInput();
+	void startTextInput(UIinputBox* u);
 	void stopTextInput();
 };
 

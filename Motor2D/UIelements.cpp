@@ -85,7 +85,9 @@ UIlabel::UIlabel( )
 
 // Destructor:
 UIlabel::~UIlabel()
-{ }
+{ 
+	SDL_DestroyTexture(text_tex.img);
+}
 
 // Init:
 void UIlabel::init(iPoint pos, const char *string, _TTF_Font *f, Module *module, UIelement *parent)
@@ -100,7 +102,6 @@ void UIlabel::init(iPoint pos, const char *string, _TTF_Font *f, Module *module,
 	is_inside = false;
 	type = UI_LABEL;
 	strcpy_s(text, string);
-	//text = string;
 	font = f != NULL ? f : app->fonts->default;
 	SDL_Color white = { 255, 255, 255, 255 };
 	text_tex.img = app->fonts->print(text, white, font);
@@ -131,7 +132,9 @@ UIimage::UIimage()
 
 // Destructor:
 UIimage::~UIimage()
-{ }
+{
+	SDL_DestroyTexture(image.img);
+}
 
 // Init:
 void UIimage::init(iPoint pos, SDL_Texture *tex, SDL_Rect &section, Module *module, UIelement *parent)
@@ -165,7 +168,11 @@ UIbutton::UIbutton()
 
 // Destructor:
 UIbutton::~UIbutton()
-{ }
+{ 
+	SDL_DestroyTexture(idle.img);
+	SDL_DestroyTexture(hover.img);
+	SDL_DestroyTexture(clicked.img);
+}
 
 // Draw:
 void UIbutton::init(iPoint pos, SDL_Texture *tex_idle, SDL_Rect &section_idle, SDL_Texture *tex_hover, SDL_Rect &section_hover,
@@ -179,6 +186,7 @@ void UIbutton::init(iPoint pos, SDL_Texture *tex_idle, SDL_Rect &section_idle, S
 
 	interactable = true;
 	is_inside = false;
+	can_be_focused = true;
 	type = UI_BUTTON;
 	idle.img = tex_idle != NULL ? tex_idle : (SDL_Texture*)app->gui->getAtlas();
 	hover.img = tex_hover != NULL ? tex_hover : (SDL_Texture*)app->gui->getAtlas();
@@ -213,6 +221,13 @@ void UIbutton::setClickedState()
 UIinputBox::UIinputBox()
 { }
 
+// Destructor:
+UIinputBox::~UIinputBox()
+{
+	SDL_DestroyTexture(frame.image.img);
+	SDL_DestroyTexture(text.text_tex.img);
+}
+
 // Init:
 void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
 	_TTF_Font *font, Module *module, UIelement *parent)
@@ -223,13 +238,14 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 	addListener(app->gui);
 	addListener(module);
 
-	frame.init(pos, frame_tex, frame_section,module, this);
-	text.init(pos + text_offset, initial_text, font, module, this);
+	frame.init({ 0, 0 }, frame_tex, frame_section, module, this);
+	text.init(text_offset, initial_text, font, module, this);
 	offset = text_offset;
-	cursor_pos.setZero();
+	cursor_pos = 0;
 	interactable = true;
 	is_inside = false;
 	active = false;
+	can_be_focused = true;
 	type = UI_INPUTBOX;
 	setDimensions(frame_section.w, frame_section.h);
 
@@ -247,18 +263,28 @@ bool UIinputBox::draw()
 	if(strcmp(text.text ,"") != 0)		// Frame
 		app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);		
 	if(active)							// Label
-	app->render->DrawQuad({ p.x + offset.x + cursor_pos.x, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   // Cursor
+	app->render->DrawQuad({ p.x + offset.x + cursor_pos, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   // Cursor
 	return true;
-}
-
-void UIinputBox::sendUIinputBox()
-{
-	app->input->input_box = this;
 }
 
 void UIinputBox::moveCursor()
 {
 	int tex_width, dummy;
 	app->fonts->calcSize(text.text, tex_width, dummy, text.font);
-	cursor_pos.x = tex_width;
+	cursor_pos = tex_width;
+}
+
+void UIinputBox::drawDebug()
+{
+	// Frame
+	iPoint p = frame.getScreenPos();
+	int w, h; frame.getScreenRect(w, h);
+	SDL_Rect r = { p.x, p.y, w,h };
+	app->render->DrawQuad(r, 255, 125, 0, 255, false);
+
+	// Label
+	p = text.getScreenPos();
+	text.getScreenRect(w, h);
+	r = { p.x, p.y, w, h };
+	app->render->DrawQuad(r, 255, 125, 0, 255, false);
 }

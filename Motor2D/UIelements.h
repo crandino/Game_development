@@ -30,14 +30,15 @@ public:
 	const UIelement*		parent;
 	bool					interactable;
 	bool					is_inside;
+	bool					can_be_focused = false;
 	UI_TYPE					type;
 	DList<Module*>			mod_listeners;		// Module listener
 
-	UIelement() {};
-	~UIelement() {};
+	UIelement() {}
+	virtual ~UIelement() {}
 
 	virtual bool draw() { return true; }
-	void drawDebug();
+	virtual void drawDebug();
 
 	bool isMouseIn(const iPoint &pos);
 	void dragElement();
@@ -49,6 +50,7 @@ public:
 
 	void addListener(Module *module);
 	void setDimensions(const int &width, const int &height);
+	void center() {};
 };
 
 class UIlabel : public UIelement
@@ -114,7 +116,7 @@ public:
 	UIimage			frame;
 	UIlabel			text;
 	iPoint			offset;
-	iPoint			cursor_pos;
+	int				cursor_pos;
 	int				cursor_height;
 	int				cursor_width;
 	bool			active;
@@ -126,7 +128,8 @@ public:
 		_TTF_Font *font, Module *module, UIelement *parent);
 	bool draw();
 	bool preUpdate();
-	void sendUIinputBox();
+	void drawDebug();
+
 	void moveCursor();
 };
 

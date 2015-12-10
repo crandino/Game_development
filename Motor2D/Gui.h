@@ -21,7 +21,10 @@ enum MOUSE_EVENTS
 	MOUSE_CLICK_RIGHT,
 	MOUSE_LEAVE_LEFT,
 	MOUSE_LEAVE_RIGHT,
-	MOUSE_REPEAT_LEFT	
+	MOUSE_REPEAT_LEFT,
+	GAIN_FOCUS,
+	LOST_FOCUS,
+	TEXT_CHANGED
 };
 
 enum UI_TYPE
@@ -67,12 +70,12 @@ public:
 	UIelement *whichUIelemOnMouse() const;
 
 	// Gui creation functions
-	const UIlabel *createLabel(iPoint p, const char *string, _TTF_Font *font = NULL, Module *mod = NULL, UIelement *parent = NULL);
-	const UIimage *createImage(iPoint p, SDL_Texture *tex, SDL_Rect &section, Module *mod = NULL, UIelement *parent = NULL);
-	const UIbutton *Gui::createButton(iPoint p, SDL_Texture *tex_idle, SDL_Rect& section_idle, SDL_Texture *tex_hover,
+	UIlabel *createLabel(iPoint p, const char *string, _TTF_Font *font = NULL, Module *mod = NULL, UIelement *parent = NULL);
+	UIimage *createImage(iPoint p, SDL_Texture *tex, SDL_Rect &section, Module *mod = NULL, UIelement *parent = NULL);
+	UIbutton *Gui::createButton(iPoint p, SDL_Texture *tex_idle, SDL_Rect& section_idle, SDL_Texture *tex_hover,
 									  SDL_Rect& section_hover, SDL_Texture *tex_clicked, SDL_Rect& section_clicked,
 									  Module *mod = NULL, UIelement *parent = NULL);
-	const UIinputBox *Gui::createInputBox(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
+	UIinputBox *Gui::createInputBox(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
 									      _TTF_Font *font, Module *module = NULL, UIelement *parent = NULL);
 
 	const SDL_Texture* getAtlas() const;
