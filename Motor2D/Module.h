@@ -75,7 +75,7 @@ public:
 		return true;
 	}
 
-	// Can be bool, think about it!
+	// Can be bool. Think about it, men!
 	virtual void onGui(MOUSE_EVENTS eve, UIelement *trigger)
 	{
 	}

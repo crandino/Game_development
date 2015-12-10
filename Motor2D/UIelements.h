@@ -32,7 +32,7 @@ public:
 	bool					is_inside;
 	bool					can_be_focused = false;
 	UI_TYPE					type;
-	DList<Module*>			mod_listeners;		// Module listener
+	DList<Module*>			mod_listeners;			// Module listener
 
 	UIelement() {}
 	virtual ~UIelement() {}
@@ -50,7 +50,6 @@ public:
 
 	void addListener(Module *module);
 	void setDimensions(const int &width, const int &height);
-	void center() {};
 };
 
 class UIlabel : public UIelement

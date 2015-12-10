@@ -69,6 +69,7 @@ bool Scene::start()
 	// Inputbox
 	SDL_Rect frame_section = { 495, 573, 332, 52 };
 	app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
+
 	return true;
 }
 
@@ -195,27 +196,5 @@ bool Scene::cleanUp()
 
 void Scene::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 {
-	//switch (mouse_event)
-	//{
-	//case MOUSE_ENTER:
-	//	LOG("It's hover!");
-	//	break;
-	//case MOUSE_LEAVE:
-	//	LOG("It's leaving!");
-	//	break;
-	//case MOUSE_CLICK_LEFT:
-	//	LOG("Left click on mouse.");
-	//	break;
-	//case MOUSE_LEAVE_LEFT:
-	//	LOG("Left click release.");
-	//	break;
-	//case MOUSE_CLICK_RIGHT:
-	//	LOG("Right click on mouse.");
-	//	break;
-	//case MOUSE_LEAVE_RIGHT:
-	//	LOG("Right click release.");
-	//	break;
-	//default:
-	//	break;
-	//}
+	
 }

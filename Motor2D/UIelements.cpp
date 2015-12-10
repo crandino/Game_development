@@ -259,11 +259,14 @@ void UIinputBox::init(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SD
 bool UIinputBox::draw()
 {
 	iPoint p = getScreenPos();
+	// Frame
 	app->render->blit(frame.image.img, p.x, p.y, &frame.image.section);	
-	if(strcmp(text.text ,"") != 0)		// Frame
-		app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);		
-	if(active)							// Label
-	app->render->DrawQuad({ p.x + offset.x + cursor_pos, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   // Cursor
+	// Label
+	if(strcmp(text.text ,"") != 0)		
+		app->render->blit(text.text_tex.img, p.x + offset.x, p.y + offset.y);	
+	// Cursor
+	if(active)							
+		app->render->DrawQuad({ p.x + offset.x + cursor_pos, p.y + offset.y, cursor_width, cursor_height }, 255, 255, 255);   
 	return true;
 }
 
