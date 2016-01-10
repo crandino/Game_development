@@ -58,22 +58,31 @@ bool Scene::start()
 	_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 14);
 	// Main Window and title
 	SDL_Rect win_rect = {32, 542, 420, 452 };
-	const UIimage *w = app->gui->createImage({ 300, 100 }, NULL, win_rect, this);
+	const UIimage *w = app->gui->createImage({ 200, 100 }, NULL, win_rect, this);
 	app->gui->createLabel({ 155, 50 }, "Window Title", UIfont, this, (UIelement*)w);
 
-	// Button and label of the button
-	SDL_Rect idle_section = { 648, 173, 218, 57 };
-	SDL_Rect hover_section = { 6, 117, 218, 57 };
-	SDL_Rect clicked_section = { 417, 173, 218, 57 };
-	const UIbutton *b = app->gui->createButton({ 120, 300 }, NULL, idle_section, NULL, hover_section, NULL, clicked_section, this, (UIelement*)w);
-	app->gui->createLabel({ 20, 15 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
+	//// Button and label of the button
+	//SDL_Rect idle_section = { 648, 173, 218, 57 };
+	//SDL_Rect hover_section = { 6, 117, 218, 57 };
+	//SDL_Rect clicked_section = { 417, 173, 218, 57 };
+	//const UIbutton *b = app->gui->createButton({ 120, 300 }, NULL, idle_section, NULL, hover_section, NULL, clicked_section, this, (UIelement*)w);
+	//app->gui->createLabel({ 20, 15 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
 
-	// Inputbox
-	SDL_Rect frame_section = { 495, 573, 332, 52 };
-	app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
+	//// Inputbox
+	//SDL_Rect frame_section = { 495, 573, 332, 52 };
+	//app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
 
-	// Inputbox
-	app->gui->createInputBox({ 50, 150 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
+	//// Inputbox
+	//app->gui->createInputBox({ 50, 150 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
+
+	// EXERCISE 1 and 6
+	SDL_Rect bar_rect = { 0, 11, 307, 11 };
+	SDL_Rect thumb_rect = { 805, 318, 26, 15 };
+	app->gui->createHorizontalScrollBar({ 50, 100 }, 5, -2, NULL, bar_rect, NULL, thumb_rect, this, (UIelement*)w);
+
+	// EXERCISE 5
+	_TTF_Font *UIfont_counter = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 26);
+	counter = app->gui->createLabel({ 125, 200 }, "Value: -.--     ", UIfont_counter, this, (UIelement*)w);
 
 	return true;
 }
@@ -220,5 +229,27 @@ void Scene::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 		}
 		break;
 	}
+
+	// EXERCISE 5
+	case UI_HORIZONTALSCROLLBAR:
+	{
+		UIHorizontalScrollBar *h = (UIHorizontalScrollBar*)trigger;
+		switch (mouse_event)
+		{
+		case GAIN_FOCUS:
+			move_locked = true;
+			break;
+		case LOST_FOCUS:
+			move_locked = false;
+			break;
+		case DRAGGED:
+			char c[20];
+			sprintf_s(c, 20, "Value: %0.2f", h->calculateValue());
+			counter->setText(c);
+			break;
+		}
+		break;
 	}
+	}
+
 }

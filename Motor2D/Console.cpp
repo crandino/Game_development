@@ -53,7 +53,7 @@ bool Console::cleanUp()
 
 bool Console::execute(const char *func_to_execute) const
 {
-
+	return true;
 }
 
 bool Console::createCommand(const char *name_command, Module *listener)

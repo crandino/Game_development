@@ -137,6 +137,11 @@ const SDL_Texture* Gui::getAtlas() const
 	return atlas;
 }
 
+const UIelement* Gui::whichFocus() const
+{
+	return focus;
+}
+
 // Factories for class Gui ---------------------------------------------------
 UIlabel* Gui::createLabel(iPoint p, const char *string, _TTF_Font *font, Module *mod, UIelement *parent)
 {
@@ -172,6 +177,16 @@ UIinputBox *Gui::createInputBox(iPoint pos, iPoint text_offset, SDL_Texture *fra
 	i->init(pos, text_offset, frame_tex, frame_section, initial_text, font, module, parent);
 	UIelement_list.add(i);
 	return i;
+}
+
+// EXERCISE 1 and 6
+UIHorizontalScrollBar *Gui::createHorizontalScrollBar(iPoint pos, int bar_offset, int thumb_vert_offset, SDL_Texture *bar_tex, SDL_Rect &section_bar,
+	SDL_Texture *thumb_tex, SDL_Rect &section_thumb, Module *module, UIelement *parent)
+{
+	UIHorizontalScrollBar *h = new UIHorizontalScrollBar();
+	h->init(pos, bar_offset, thumb_vert_offset, bar_tex, section_bar, thumb_tex, section_thumb, module, parent);
+	UIelement_list.add(h);
+	return h;
 }
 
 void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
@@ -249,6 +264,26 @@ void Gui::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger)
 			break;
 		case TEXT_CHANGED:
 			i->moveCursor();
+			break;
+		}
+		break;
+	}
+
+	// EXERCISE 2
+	case UI_HORIZONTALSCROLLBAR:
+	{
+		UIHorizontalScrollBar *h = (UIHorizontalScrollBar*)trigger;
+		switch (mouse_event)
+		{
+		case GAIN_FOCUS:
+			if (focus != trigger)
+				focus = trigger;
+			break;
+		case MOUSE_REPEAT_LEFT:
+			iPoint p;
+			app->input->getMousePosition(p);
+			if (focus == trigger && h->thumb.isMouseIn(p))
+				h->dragElement();
 			break;
 		}
 		break;

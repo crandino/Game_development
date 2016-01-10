@@ -10,6 +10,7 @@ class UIimage;
 class UIbutton;
 class UIlabel;
 class UIinputBox;
+class UIHorizontalScrollBar;
 class UIelement;
 struct _TTF_Font;
 
@@ -24,7 +25,8 @@ enum MOUSE_EVENTS
 	MOUSE_REPEAT_LEFT,
 	GAIN_FOCUS,
 	LOST_FOCUS,
-	TEXT_CHANGED
+	TEXT_CHANGED,
+	DRAGGED
 };
 
 enum UI_TYPE
@@ -32,7 +34,8 @@ enum UI_TYPE
 	UI_LABEL,
 	UI_IMAGE,
 	UI_BUTTON,
-	UI_INPUTBOX
+	UI_INPUTBOX,
+	UI_HORIZONTALSCROLLBAR
 };
 
 // ---------------------------------------------------
@@ -77,8 +80,12 @@ public:
 									  Module *mod = NULL, UIelement *parent = NULL);
 	UIinputBox *Gui::createInputBox(iPoint pos, iPoint text_offset, SDL_Texture *frame_tex, SDL_Rect &frame_section, const char *initial_text,
 									      _TTF_Font *font, Module *module = NULL, UIelement *parent = NULL);
+	// EXERCISE 1 and 6
+	UIHorizontalScrollBar *Gui::createHorizontalScrollBar(iPoint pos, int bar_offset, int thumb_vert_offset, SDL_Texture *bar_tex, SDL_Rect &section_bar,
+								SDL_Texture *thumb_tex, SDL_Rect &section_thumb, Module *module = NULL, UIelement *parent = NULL);
 
 	const SDL_Texture* getAtlas() const;
+	const UIelement* whichFocus() const;
 	
 
 private:	

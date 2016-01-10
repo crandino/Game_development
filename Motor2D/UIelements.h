@@ -41,7 +41,7 @@ public:
 	virtual void drawDebug();
 
 	bool isMouseIn(const iPoint &pos);
-	void dragElement();
+	virtual void dragElement();
 
 	iPoint getScreenPos() const;
 	void getScreenRect(int &w, int &h) const;
@@ -133,5 +133,36 @@ public:
 
 	void moveCursor();
 };
+
+// EXERCISE 1 and 6
+class UIHorizontalScrollBar : public UIelement
+{
+
+public:
+
+	UIimage			bar;
+	UIimage			thumb;
+	iPoint			thumb_pos;
+	int				left_limit;
+	int				right_limit;
+
+	UIHorizontalScrollBar();
+	~UIHorizontalScrollBar();
+
+	void init(iPoint pos, int bar_offset, int thumb_vert_offset, SDL_Texture *bar_tex, SDL_Rect &section_bar,
+			  SDL_Texture *thumb_tex, SDL_Rect &section_thumb, Module *module, UIelement *parent);
+	bool draw();
+	// EXERCISE 3
+	bool preUpdate();
+	void drawDebug();
+	// EXERCISE 2
+	void dragElement();
+	// EXERCISE 5
+	float calculateValue();
+	// EXERCISE 2 and 3
+	bool checkLimits(int new_x_pos);
+	
+};
+
 
 #endif //__UIELEMENTS__

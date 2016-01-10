@@ -4,6 +4,7 @@
 #include "Module.h"
 
 struct SDL_Texture;
+class UIlabel;
 
 class Scene : public Module
 {
@@ -35,6 +36,9 @@ public:
 	void Scene::onGui(MOUSE_EVENTS mouse_event, UIelement *trigger);
 
 private:
+
+	// EXERCISE 5
+	UIlabel *counter;
 
 	float player_x;
 	float player_y;

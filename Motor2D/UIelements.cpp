@@ -145,7 +145,7 @@ void UIimage::init(iPoint pos, SDL_Texture *tex, SDL_Rect &section, Module *modu
 	addListener(app->gui);
 	addListener(module);
 
-	interactable = true;
+	interactable = false;
 	is_inside = false;
 	type = UI_IMAGE;
 	image.img = tex != NULL ? tex : (SDL_Texture*)app->gui->getAtlas();
@@ -326,4 +326,122 @@ void UIinputBox::drawDebug()
 	text.getScreenRect(w, h);
 	r = { p.x, p.y, w, h };
 	app->render->DrawQuad(r, 255, 125, 0, 255, false);
+}
+
+// ----- UIHorizontalScrollBar -----
+
+UIHorizontalScrollBar::UIHorizontalScrollBar()
+{ }
+
+UIHorizontalScrollBar::~UIHorizontalScrollBar()
+{
+	SDL_DestroyTexture(bar.image.img);
+	SDL_DestroyTexture(thumb.image.img);
+}
+
+// EXERCISE 1 and 6
+void UIHorizontalScrollBar::init(iPoint pos, int bar_offset, int thumb_vert_offset, SDL_Texture *bar_tex, SDL_Rect &section_bar,
+	SDL_Texture *thumb_tex, SDL_Rect &section_thumb, Module *module, UIelement *parent)
+{
+	setLocalPos(pos);
+	this->parent = parent != NULL ? parent : app->gui->screen;
+	// Listeners.
+	addListener(app->gui);
+	addListener(module);
+
+	bar.init({ 0, 0 }, bar_tex, section_bar, module, this);
+	thumb_pos.x = bar_offset;
+	thumb_pos.y = thumb_vert_offset;
+	thumb.init( thumb_pos, thumb_tex, section_thumb, module, this);
+	left_limit = bar_offset;
+	right_limit = section_bar.w - bar_offset;
+	
+	interactable = true;
+	can_be_focused = true;
+	type = UI_HORIZONTALSCROLLBAR;
+	setDimensions(section_bar.w, section_bar.h);
+
+}
+
+// Draw:
+bool UIHorizontalScrollBar::draw()
+{
+	iPoint p = getScreenPos();
+	// Bar
+	app->render->blit(bar.image.img, p.x, p.y, &bar.image.section);
+	// Thumb
+	app->render->blit(thumb.image.img, p.x + thumb_pos.x, p.y + thumb_pos.y, &thumb.image.section);
+	
+	return true;
+}
+
+// Draw:
+// EXERCISE 5
+float UIHorizontalScrollBar::calculateValue()
+{
+	return ((float)(thumb_pos.x - left_limit) / ((right_limit - thumb.image.section.w)  - left_limit));
+}
+
+// Draw:
+// EXERCISE 2
+void UIHorizontalScrollBar::dragElement()
+{
+	iPoint p = app->input->getMouseMotion();
+	int final_pos = thumb_pos.x + p.x;
+	if (checkLimits(final_pos))
+	{
+		thumb_pos.x = final_pos;
+		iPoint new_pos = { final_pos, thumb_pos.y };
+		thumb.setLocalPos(new_pos);
+
+		for (doubleNode<Module*> *item = mod_listeners.getLast(); item != NULL; item = item->previous)
+			item->data->onGui(DRAGGED, this);
+	}
+}
+
+// EXERCISE 2 and 3
+bool UIHorizontalScrollBar::checkLimits(int new_x_pos)
+{
+	return (new_x_pos >= left_limit && new_x_pos + thumb.image.section.w <= right_limit);
+}
+
+void UIHorizontalScrollBar::drawDebug()
+{
+	// Bar
+	iPoint p = bar.getScreenPos();
+	int w, h; bar.getScreenRect(w, h);
+	SDL_Rect r = { p.x, p.y, w, h };
+	app->render->DrawQuad(r, 255, 125, 0, 255, false);
+
+	// Thumb
+	p = thumb.getScreenPos();
+	thumb.getScreenRect(w, h);
+	r = { p.x, p.y, w, h };
+	app->render->DrawQuad(r, 255, 125, 0, 255, false);
+}
+
+// EXERCISE 3
+bool UIHorizontalScrollBar::preUpdate()
+{
+	if (this == app->gui->whichFocus())
+	{
+		int speed = 1;
+		iPoint new_pos;
+
+		if (app->input->getKey(SDL_SCANCODE_LEFT) == KEY_REPEAT && checkLimits(thumb_pos.x - speed))
+		{
+			thumb_pos.x -= speed;
+			thumb.setLocalPos(thumb_pos);			
+		}
+		if (app->input->getKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT && checkLimits(thumb_pos.x + speed))
+		{
+			thumb_pos.x += speed;
+			thumb.setLocalPos(thumb_pos);
+		}
+
+		for (doubleNode<Module*> *item = mod_listeners.getLast(); item != NULL; item = item->previous)
+			item->data->onGui(DRAGGED, this);
+	}
+
+	return true;
 }
