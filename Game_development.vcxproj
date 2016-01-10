@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClCompile Include="Motor2D\App.cpp" />
     <ClCompile Include="Motor2D\Audio.cpp" />
+    <ClCompile Include="Motor2D\Console.cpp" />
     <ClCompile Include="Motor2D\FileSystem.cpp" />
     <ClCompile Include="Motor2D\Fonts.cpp" />
     <ClCompile Include="Motor2D\Gui.cpp" />
@@ -95,6 +96,7 @@
   <ItemGroup>
     <ClInclude Include="Motor2D\App.h" />
     <ClInclude Include="Motor2D\Audio.h" />
+    <ClInclude Include="Motor2D\Console.h" />
     <ClInclude Include="Motor2D\DList.h" />
     <ClInclude Include="Motor2D\DynArray.h" />
     <ClInclude Include="Motor2D\FileSystem.h" />

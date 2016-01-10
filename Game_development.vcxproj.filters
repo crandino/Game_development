@@ -83,6 +83,9 @@
     <ClCompile Include="Motor2D\UIelements.cpp">
       <Filter>Modules\UI Elements</Filter>
     </ClCompile>
+    <ClCompile Include="Motor2D\Console.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Motor2D\App.h">
@@ -156,6 +159,9 @@
     </ClInclude>
     <ClInclude Include="Motor2D\UIelements.h">
       <Filter>Modules\UI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Motor2D\Console.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
