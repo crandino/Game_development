@@ -13,7 +13,7 @@
 #include "Maps.h"
 #include "UIelements.h"
 
-#define FRAME_LOGIC 60
+#define FRAME_LOGIC 20
 #define MS_PER_LOGIC_FRAME 1000.0f/FRAME_LOGIC
 
 Scene::Scene() : Module()
@@ -55,34 +55,32 @@ bool Scene::start()
 
 	// ----- UI elements creation -----
 	// Common font
-	_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 14);
+	//_TTF_Font *UIfont = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 14);
 	// Main Window and title
-	SDL_Rect win_rect = {32, 542, 420, 452 };
-	const UIimage *w = app->gui->createImage({ 200, 100 }, NULL, win_rect, this);
-	app->gui->createLabel({ 155, 50 }, "Window Title", UIfont, this, (UIelement*)w);
+	//SDL_Rect win_rect = {32, 542, 420, 452 };
+	//const UIimage *w = app->gui->createImage({ 200, 100 }, NULL, win_rect, this);
+	//app->gui->createLabel({ 155, 50 }, "Window Title", UIfont, this, (UIelement*)w);
 
-	//// Button and label of the button
+	// Button and label of the button
 	//SDL_Rect idle_section = { 648, 173, 218, 57 };
 	//SDL_Rect hover_section = { 6, 117, 218, 57 };
 	//SDL_Rect clicked_section = { 417, 173, 218, 57 };
 	//const UIbutton *b = app->gui->createButton({ 120, 300 }, NULL, idle_section, NULL, hover_section, NULL, clicked_section, this, (UIelement*)w);
 	//app->gui->createLabel({ 20, 15 }, "Hola, me llamo Carlos", UIfont, this, (UIelement*)b);
 
-	//// Inputbox
+	// Inputbox
 	//SDL_Rect frame_section = { 495, 573, 332, 52 };
 	//app->gui->createInputBox({ 50, 100 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
 
-	//// Inputbox
+	// Inputbox
 	//app->gui->createInputBox({ 50, 150 }, { 10, 15 }, NULL, frame_section, "Put text here", UIfont, this, (UIelement*)w);
 
-	// EXERCISE 1 and 6
-	SDL_Rect bar_rect = { 0, 11, 307, 11 };
-	SDL_Rect thumb_rect = { 805, 318, 26, 15 };
-	app->gui->createHorizontalScrollBar({ 50, 100 }, 5, -2, NULL, bar_rect, NULL, thumb_rect, this, (UIelement*)w);
-
-	// EXERCISE 5
-	_TTF_Font *UIfont_counter = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 26);
-	counter = app->gui->createLabel({ 125, 200 }, "Value: -.--     ", UIfont_counter, this, (UIelement*)w);
+	// HorizontalScrollBar
+	//SDL_Rect bar_rect = { 0, 11, 307, 11 };
+	//SDL_Rect thumb_rect = { 805, 318, 26, 15 };
+	//app->gui->createHorizontalScrollBar({ 50, 100 }, 5, -2, NULL, bar_rect, NULL, thumb_rect, this, (UIelement*)w);
+	//_TTF_Font *UIfont_counter = app->fonts->load("fonts/open_sans/OpenSans-Regular.ttf", 26);
+	//counter = app->gui->createLabel({ 125, 200 }, "Value: -.--     ", UIfont_counter, this, (UIelement*)w);
 
 	return true;
 }
@@ -96,7 +94,7 @@ bool Scene::preUpdate()
 // Called each loop iteration
 bool Scene::update(float dt)
 {
-	float cam_speed = ceil(25.0f * (dt/MS_PER_LOGIC_FRAME));
+	float cam_speed = ceil(100.0f * dt / MS_PER_LOGIC_FRAME);
 
 	/*if (app->input->getKey(SDL_SCANCODE_L) == KEY_DOWN)
 		app->loadGame("save_game.xml");

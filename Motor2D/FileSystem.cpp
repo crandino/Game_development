@@ -16,8 +16,7 @@ FileSystem::FileSystem()
 		SDL_free(base_path);
 
 		addSearchPath(".");
-	}
-	
+	}	
 }
 
 FileSystem::~FileSystem()

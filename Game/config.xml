@@ -3,7 +3,7 @@
 <config>
 
   <!-- App Configuration -->
-  <app framerate="0" />
+  <app framerate="30" />
   
   <!-- Each module has its own node. Separate configuration -->
   <input>

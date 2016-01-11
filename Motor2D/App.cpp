@@ -228,7 +228,6 @@ bool App::preUpdate()
 		if(pModule->active == false) {
 			continue;
 		}
-
 		ret = item->data->preUpdate();
 	}
 
